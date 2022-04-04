@@ -8,19 +8,21 @@ Personal notes of read papers.
 
 ### Image-based Rendering
 
-#### Neural Volume Rendering
+### Neural Volume Rendering
 
 2020 NeRF Representing Scenes as Neural Radiance Fields for View Synthesis
 
 2021 PlenOctrees for Real-time Rendering of Neural Radiance Fields
 
-#### Rasterization
+2021 Plenoxels Radiance Fields without Neural Networks
+
+### Rasterization
 
 1987 Marching Cubes A High Resolution 3D Surface Construction Algorithm
 
-#### Ray Tracing
+### Ray Tracing
 
-#### Volume Rendering
+### Volume Rendering
 
 ## Computer Vision
 
