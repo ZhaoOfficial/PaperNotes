@@ -48,7 +48,7 @@ Assumptions. NeRFactor considers objects to be composed of hard surfaces with a 
 
 网络：MLP，预测物体形状和随空间位置变化的反射率。
 
-输出：3D 表面某一点 $\mathbf x$ 处的表面法向 $\mathbf n$，任何方向的可见度 $v(\omega_i)$，反照率 $\mathbf a$和 反射率 $\mathbf z_{\text{BRDF}}$。
+输出：3D 表面某一点 $\mathbf x$ 处的表面法向 $\mathbf n$，任何方向的可见度 $v(\omega_i)$，反照率 $\mathbf a$ 和反射率 $\mathbf z_{\text{BRDF}}$。
 
 ### Shape
 
@@ -63,7 +63,7 @@ NeRF 优化过的体密度：$\sigma$
 
 NeRF 预测的表面位置：
 $$
-\mathbf x_{\text{surf}}=\mathbf o+(\int_{0}^{\infty}T(t)\sigma(\mathbf r(t))tdt)\mathbf d\\
+\mathbf x_{\text{surf}}=\mathbf o+\left(\int_{0}^{\infty}T(t)\sigma(\mathbf r(t))tdt\right)\mathbf d\\
 T(t)=\exp({-\int_{0}^{t}\sigma(\mathbf r(s))ds})
 $$
 我们没有保持完整的体积表示，而是将几何形状固定在从优化的 NeRF 中提取的这个表面上。这可以在训练和推理期间实现更高效的重打光，因为我们可以计算出每条相机光线的预期终止位置处的出射辐射，而不是沿着每条相机光线的每个点。

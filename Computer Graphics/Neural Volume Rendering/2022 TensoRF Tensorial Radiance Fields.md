@@ -84,7 +84,7 @@ Our approach supports various types of appearance features in $\mathcal G_c$, de
 我们考虑一个单通道网格 $\mathcal G_{\sigma}$，其值直接表示体积密度，不需要额外的转换函数。
 We consider a single-channel grid $\mathcal G_{\sigma}$​ whose values represent volume density directly, without requiring an extra converting function.
 $$
-\sigma,c=\mathcal G_{\sigma}(\mathbf x),S(\mathcal G_c(\mathbf x),d)
+\sigma=\mathcal G_{\sigma}(\mathbf x),c=S(\mathcal G_c(\mathbf x),d)
 $$
 其中 $\mathcal G_{\sigma}(\mathbf x)$ 和 $\mathcal G_c(\mathbf x)$ 由 $\mathbf x$ 所在格子三线性插值得来。
 
@@ -130,9 +130,77 @@ $$
 在这里，特征模式没有额外的索引，因为我们计算了一个完整的向量。
 Here, there’s no additional indexing for the feature mode, since we compute a full vector.
 
+我们将 $\oplus[A_{c,ijk}^\star]_{\star,r}$ 表示为堆叠的所有 $A_{c,r,ijk}^{\star}$ 值的向量 $\star\in\{X,Y,Z\}$ 和 $r\in\{1,\dots,R_c\}$，这是一个 $3R_c$ 维度的向量；在实践中，$\oplus$ 也可以被视为将所有标量值（1 通道向量）连接成 $3R_c$ 通道向量的连接运算符。
+We denote $\oplus[A_{c,ijk}^\star]_{\star,r}$ as the vector that stacks all $A_{c,r,ijk}^{\star}$ values for $\star\in\{X,Y,Z\}$ and $r\in\{1,\dots,R_c\}$, which is a vector of $3R_c$ dimensions; $\oplus$ can also be considered as the concatennation operator that concatenates all scalar values (1-channel vectors) into a $3R_c$-channel vector in practice.
+$$
+\mathcal G_{c,ijk}=B(\oplus[A_{c,ijk}^\star]_{\star,r})
+$$
 
+#### Trilinear interpolation
 
+三线性插值一个网格的值等效于插值三个分量在相乘。例如我们想得到 $A_r^X(\mathbf x)$ 处的值，其中 $\mathbf x=(x,y,z)$​。
+$$
+A_r^X(\mathbf x)=[\mathbf v_r^X\circ\mathbf M_r^{Y,Z}](\mathbf x)
+$$
+由于外积是线性映射，因此可以分解：
+$$
+A_r^X(\mathbf x)=\mathbf v_r^X(x)\mathbf M_r^{Y,Z}(y,z)
+$$
+因此：
+$$
+\mathcal G_{\sigma}(\mathbf x)=\sum_{r=1}^{R_{\sigma}}\sum_{\star}A_{\sigma,r}^{\star}(\mathbf x)\quad\star\in\{X,Y,Z\}\\
+\mathcal G_{c}(\mathbf x)=B(\oplus[A_{c,r}^m(\mathbf x)]_{m,r})
+$$
 
+### 4.4 Rendering and Reconstruction
 
+$$
+\sigma=\sum_{r=1}^{R_{\sigma}}\sum_{\star}A_{\sigma,r}^{\star}(\mathbf x),c=S(B(\oplus[A_{c,r}^m(\mathbf x)]_{m,r}),d)
+$$
 
+#### Volume rendering
 
+Use NeRF's equation:
+$$
+C=\sum_{q=1}^{Q}T_q(1-\exp(-\sigma_q\Delta_q))c_q\\
+T_q=\exp({-\sum_{p=1}^{q-1}\sigma_p\Delta_p})
+$$
+$\sigma_q,c_q$ 是采样点 $\mathbf x_q$ 处的密度和颜色，$\Delta_q$ 是光线步长，$T_q$ 是透射率。
+
+#### Reconstruction
+
+Gradient descent, L2 loss.
+L1 norm loss on vector and total variation loss on matrix.
+Coarse to fine.
+
+## 5 Implementation details
+
+我们将特征解码函数 $S$ 实现为 MLP 或 SH 函数，并为两者使用 $P = 27$ 特征。对于 SH，这对应于 RGB 通道的三阶 SH 系数。对于神经特征，我们使用具有两个 FC 层（具有 128 通道隐藏层）和 ReLU 激活的小型 MLP。
+We implement the feature decoding function $S$ as either an MLP or SH function and use $P = 27$ features for both. For SH, this corresponds to 3rd-order SH coefficients with RGB channels. For neural features, we use a small MLP with two FC layers (with 128-channel hidden layers) and ReLU activation.
+
+Adam, 0.02 for tensor, 0.001 for MLP.
+Batch size 4096
+
+为了实现从粗到细的重建，我们从一个初始的低分辨率网格开始，它具有 $N^3_0$ 体素，$N_0 = 128$； 然后，我们在步骤 $2000、3000、4000、5500、7000$ 处对向量和矩阵进行线性和双线性上采样，体素数量在对数空间中线性插值在 $N^3_0$ 和 $N^3$ 之间。
+To achieve coarse-to-fine reconstruction, we start from an initial low-resolution grid with $N^3_0$ voxels with $N_0 = 128$; we then upsample the vectors and matrices linearly and bilinearly at steps $2000, 3000, 4000, 5500, 7000$ with the numbers of voxels interpolated between $N^3_0$ and $N^3$ linearly in logarithmic space.
+
+## 6 Experiments
+
+#### Analysis of different TensoRF models
+
+请注意，TensoRF-CP 和 TensoRF-VM 都可以通过更多组件或更高的网格分辨率始终如一地实现更好的渲染质量。 TensoRF-CP实现超紧凑建模；即使是具有 384 个组件的最大模型 $500^3$ 和体素也需要不到 4MB。
+Note that both TensoRF-CP and TensoRF-VM achieve consistently better rendering quality with more components or higher grid resolutions. TensoRF-CP achieves super compact modeling; even the largest model with 384 components $500^3$ and voxels requires less than 4MB.
+
+另一方面，由于在每个组件中压缩了更多的参数，TensoRF-VM 的渲染质量明显优于 TensoRF-CP；$200^3$ 即使是只有 48 个组件和体素的最小 TensoRF-VM 模型也能够胜过使用更多组件和体素的最佳 CP 模型。
+On the other hand, because it compresses more parameters in each component, TensoRF-VM achieves significantly better rendering quality than TensoRF-CP; $200^3$ even the smallest TensoRF-VM model with only 48 components and voxels is able to outperform the best CP model that uses many more components and voxels.
+
+#### Optimization steps
+
+我们的紧凑型 CP-384 模型 (3.9MB) 甚至可以在 60k 步后实现大于 32 的 PSNR，高于所有先前方法的 PSNR。 另一方面，我们的 VM 模型可以通过很少的步骤快速实现高渲染质量。
+Our compact CP-384 model (3.9MB) can even achieve a PSNR greater than 32 after 60k steps, higher than the PSNRs of all previous methods. On the other hand, our VM models can quickly achieve high rendering quality in very few steps.
+
+#### Comparisons on $360^\circ$ scenes
+
+#### Forward-facing scenes
+
+## 7 Conclusion
