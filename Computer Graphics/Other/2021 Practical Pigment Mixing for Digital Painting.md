@@ -89,7 +89,101 @@ Although the subtractive mixing does have the ability to produce green out of ye
 
 ## 3 Our Method
 
+当今绘画软件中使用的最基本的混合操作是线性插值：
+The most basic mixing operation used in today’s painting software is linear interpolation:
+$$
+\mathrm{lerp}(\mathrm{RGB}_1,\mathrm{RGB}_2,t)=(1-t)\mathrm{RGB}_1+t\mathrm{RGB}_2\quad t\in[0,1]
+$$
+我们现在的目标是构建线性插值的替代版本，它采用相同的 RGB 输入，但会产生一种混合实际的颜料就会产生这种颜色。
+Our aim now is to build an alternate version of linear interpolation, which takes the same RGB inputs but produces a color that would result if we mixed actual paints.
+$$
+\mathrm{kmerp}(\mathrm{RGB}_1,\mathrm{RGB}_2,t)
+$$
+颜料的不同组合可用于混合相同的 RGB 颜色，每种颜色与另一种颜色混合时会产生不同的结果。为了解决这个问题，我们需要确定一组原色 $\mathcal P^*=\{(K_i^*(\lambda),S_i^*(\lambda))\}_{i=1}^N$。
+Different combinations of pigments can be used to mix the same RGB color, each leading to a different outcome when mixed with another color. To resolve this, we need to decide on a set of primary pigments $\mathcal P^*=\{(K_i^*(\lambda),S_i^*(\lambda))\}_{i=1}^N$.
 
+主要颜料的设置是先验决定的，具体选择取决于 kmerp 用户。对于一般用途，我们使用四种现代有机颜料，提供广泛的色域：酞菁蓝、喹吖啶酮洋红色、汉莎黄和钛白。
+The set of primary pigments is decided a priori, and the concrete choice is up to the kmerp user. For the general purpose, we use four modern organic pigments that provide a wide color gamut: Phthalo Blue, Quinacridone Magenta, Hansa Yellow, and Titanium White.
+
+kmerp 背后的主要思想是首先将每种 RGB 颜色分解为这些主要颜料的混合物。 这相当于反转 [](#2 Background and Related Work) 中等式中概述的 K-M 混合过程。
+The main idea behind kmerp is to first decompose each RGB color into a mixture of these primary pigments. This amounts to inverting the K–M mixing procedure outlined in equations in [](#2 Background and Related Work).
+
+我们将此反演任务视为最小二乘优化问题并求解未知浓度 $\mathbf c$：
+We pose this inversion task as a least-squares optimization problem and solve for the unknown concentrations $\mathbf c$:
+$$
+\mathop{\mathrm{unmix}}_{\mathcal P^*}(\mathrm{RGB})=\mathop{\arg\min}_{\mathbf c}\|\mathop{\mathrm{mix}}_{\mathcal P^*}(\mathbf c)-\mathrm{RGB}\|^2
+$$
+尽管 $\mathbf{c}$ 中的混合操作是非线的，但它是平滑且可微的，这允许我们使用牛顿型求解器来获得优化的解。
+Even though the mix operation is non-linear in $\mathbf{c}$, it is smooth and differentiable, which allows us to use a Newton-type solver to obtain the solution of the optimization.
+
+给定两个输入颜色 $\mathrm{RGB}_1,\mathrm{RGB}_2$，我们对它们的未混合浓度 $\mathbf c_1,\mathbf c_2$ 进行线性组合并混合组合浓度 $\hat{\mathbf c}$ 返回得到最终的 $\mathrm{RGB}$ 颜色。
+Given the two input colors $\mathrm{RGB}_1,\mathrm{RGB}_2$, we take a linear combination of their unmixed concentrations $\mathbf c_1,\mathbf c_2$ and mix the combined concentrations $\hat{\mathbf c}$ back to obtain the final $\mathrm{RGB}$ color.
+
+```python
+def kmerp(RGB1, RGB2, t):
+    c1 = unmix(RGB1)
+    c2 = unmix(RGB2)
+    c  = lerp(c1, c2, t)
+    return mix(c)
+```
+
+它有一个小缺陷：当 $t=0$ 或 $t=1$ 时，不能保证重现输入颜色。 这种缺陷源于这样一个事实，即存在无法由原色混合得到的 RGB 颜色。事实上，一些 RGB 颜色不能从任何目前已知的颜料中混合出来。
+It has a slight deficiency: it isn’t guaranteed to reproduce the input colors when $t=0$ or $t=1$. This deficiency stems from the fact that there are RGB colors that cannot be mixed from the primary pigments. In fact, some RGB colors cannot be mixed out of any currently known pigments.
+
+我们的下一个想法是通过引入一个附加残差项来纠正这个缺陷。残差是 RGB 颜色与其投影对应颜色之间的差异：$\mathrm{RGB}-\mathrm{mix}(\mathrm{unmix}(\mathrm{RGB}))$。
+Our next idea is to correct this deficiency by introducing an additive residual term. The residual is the difference between the RGB color and its projected counterpart: $\mathrm{RGB}-\mathrm{mix}(\mathrm{unmix}(\mathrm{RGB}))$.
+
+```python
+def kmerp(RGB1, RGB2, t):
+    c1 = unmix(RGB1)
+    c2 = unmix(RGB2)
+    r1 = RGB1 - mix(c1)
+    r2 = RGB2 - mix(c2)
+    c  = lerp(c1, c2, t)
+    r  = lerp(r1, r2, t)
+    return mix(c) + r
+```
+
+将色素浓度 $\mathbf{c}$ 和 RGB 残差 $\mathbf{r}$ 连接到单个潜在向量 $\mathbf z=[c_1,c_2, c_3,c_4,r_R,r_G,r_B]^T$。
+Establishing a homogeneous color representation by concatenating the pigment concentrations $\mathbf{c}$ and the RGB residuals $\mathbf{r}$ into a single latent vector $\mathbf z=[c_1,c_2,c_3,c_4,r_R,r_G,r_B]^T$​.
+$$
+\mathcal F(\mathrm{RGB})=\begin{bmatrix}\mathbf c\\\mathbf r\end{bmatrix}=\begin{bmatrix}\mathrm{unmix}(\mathrm{RGB})\\\mathrm{RGB}-\mathrm{mix}(\mathrm{unmix}(\mathrm{RGB}))\end{bmatrix}=\mathbf z\\
+\mathcal G(\mathbf z)=\mathrm{mix}(\mathbf c)+\mathbf r
+$$
+$\mathcal F$ and $\mathcal G$ are so-called encoder and decoder.
+
+该方案类似地扩展到两种以上颜色混合在一起的情况，例如在双线性插值中，在应用卷积时，或一般采用 $n$ 颜色的加权平均：
+The scheme extends analogously to situations where more than two colors mix together, like in bilinear interpolation, when applying convolution, or taking a weighted average of $n$ colors in general:
+$$
+\mathcal{G}\left(\frac{\sum_{i=1}^{n}wi\mathcal{F}(\mathrm{RGB}_i)}{\sum_{i=1}^{n}wi}\right)
+$$
+
+```python
+def f(RGB):
+    c = unmix(RGB)
+    r = RGB - c
+    return [c, r]
+def g(c, r):
+    return mix(c) + r
+def kmerp(RGBs, w):
+    return g(sum(w * f(RGBs)) / sum(w))
+```
+
+## 3.1 Surrogate Pigments
+
+上述基于颜料的潜在表示的一个实际问题是，一些颜料混合物会产生 sRGB 色域之外的颜色。
+A practical issue with the pigment-based latent representation described above is that some pigment mixtures produce colors outside the sRGB gamut.
+
+我们可能会限制超出范围的值以进行快速补救，但这会导致混合过程不再可逆。
+We may clamp the out-of-range values for a quick remedy, but that causes the mixing process to no longer be invertible.
+
+缓解此问题的一种方法是执行色域压缩而不是设阈值。这个想法是使色域内的颜色变形，为色域外的颜色腾出空间并将它们挤进去。
+One way to alleviate this issue is to perform gamut compression instead of clamping. The idea is to deform the in-gamut colors to make room for the outside-gamut colors and squeeze them in.
+
+我们不是在颜色混合后压缩颜色，而是调整主要颜料本身，使它们的混合物首先保持在 RGB 色域内。
+Instead of compressing the colors after they have been already mixed, we tweak the primary pigments themselves to make their mixtures stay inside the RGB gamut in the first place.
+
+$\mathcal{Q^*}$: 替代颜料 surrogate pigment.
 
 
 
