@@ -16,6 +16,8 @@ Personal notes of read papers.
 
 2021 Plenoxels Radiance Fields without Neural Networks
 
+### Other
+
 ### Rasterization
 
 1987 Marching Cubes A High Resolution 3D Surface Construction Algorithm
@@ -23,6 +25,8 @@ Personal notes of read papers.
 ### Ray Tracing
 
 ### Volume Rendering
+
+1995 Optical Models for Direct Volume Rendering
 
 ## Computer Vision
 

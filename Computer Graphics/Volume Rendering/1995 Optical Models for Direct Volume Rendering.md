@@ -35,7 +35,7 @@ I(s+\Delta s)-I(s)&=-\rho(s)A\Delta sI(s)\\
 \frac{\mathrm{d}I(s)}{\mathrm{d}s}&=-\rho(s)AI(s)=-\sigma_{A}(s)I(s)\\
 \end{align*}
 $$
-$\sigma_{A}(s)$: 吸收系数 absorption coefficient.
+$\sigma_{A}(s)=\rho(s)A$: 吸收系数 absorption coefficient.
 
 解微分方程可得：
 $$
@@ -50,16 +50,110 @@ $$
 $$
 \alpha=1-\exp(-\sigma_Al)=\sigma_Al-\frac{(\sigma_Al)^2}{2}
 $$
-将像 $\sigma_A$ 这样的光学属性的值分配给被可视化的标量 $f$ 的每个值的映射称为传递函数。
-The mapping which assigns a value for an optical property like $\sigma_A$ to each value of the scalar $f$ being visualized is called a transfer function.
+将像 $\sigma_A$ 这样的光学属性的值分配给被可视化的标量 $f$ 的每个值的映射称为传递函数 $\sigma_A(f)$。
+The mapping which assigns a value for an optical property like $\sigma_A$ to each value of the scalar $f$ being visualized is called a transfer function $\sigma_A(f)$.
 
+## 3 Emission Only
 
+$C$ 每个投影面积上的发光强度 intensity per unit projected area.
 
+因此圆柱底面的光通量为：
+$$
+C\rho E\Delta sA
+$$
+因此：
+$$
+\begin{align*}
+I(s+\Delta s)-I(s)&=C(s)\rho(s)\Delta sA=g(s)\Delta s\\
+\frac{I(s+\Delta s)-I(s)}{\Delta s}&=g(s)\\
+\frac{\mathrm{d}I(s)}{\mathrm{d}s}&=g(s)\\
+\end{align*}
+$$
+$g(s)=C(s)\sigma_A(s)$: radiance.
 
+解微分方程可得：
+$$
+I(s)=I(0)+\int_0^sg(t)\mathrm{d}t
+$$
 
+## 4 Absorption Plus Emission
 
+$$
+\frac{\mathrm{d}I(s)}{\mathrm{d}s}=g(s)-\sigma_A(s)I(s)
+$$
 
+解微分方程可得：
+$$
+\begin{align*}
+I(s)&=I(0)\exp({-\int_0^s\sigma_A(t)\mathrm{d}t})+\left[\int_0^sg(t)\exp({\int_0^t\sigma_A(\tau)\mathrm{d}\tau})\mathrm{d}t\right]\exp({-\int_0^s\sigma_A(\tau)\mathrm{d}\tau})\mathrm{d}t\\
+&=I(0)\exp({-\int_0^s\sigma_A(t)\mathrm{d}t})+\int_0^sg(t)\exp({-\int_t^s\sigma_A(\tau)\mathrm{d}\tau})\mathrm{d}t\\
+&=\color{red}I(0)T(0,s)+\int_0^sg(t)T(t, s)\mathrm{d}t\\
+\end{align*}
+$$
+$T(t,s)$: $t$ 到 $s$ 点的透射率 transmittance between $t$ and $s$.
 
+注意 0 处是光线发射出位置，是远端，$s$ 处是相机所在位置，是近端。
 
+### 4.1 Calculation Methods
+
+将 $0$ 到 $s$ 均匀划分为 $n$ 等分，每段长度为 $\Delta{x}=s/n$，每段的采样为区间右端点 $x_i=i\Delta{x}$，因此：
+$$
+\exp({-\int_0^s\sigma_A(t)\mathrm{d}t})=\exp({-\sum_{i=1}^{n}\sigma_A(i\Delta{x})\Delta{x}})=\prod_{i=1}^{n}\exp({-\sigma_A(i\Delta{x})\Delta{x}})\\
+\int_0^sg(t)\exp({-\int_t^s\sigma_A(\tau)\mathrm{d}\tau})\mathrm{d}t=\sum_{i=1}^ng(i\Delta{x})\Delta{x}\exp({-\int_{i\Delta{x}}^s\sigma_A(\tau)\mathrm{d}\tau})\\
+\exp({-\int_{i\Delta{x}}^s\sigma_A(\tau)\mathrm{d}\tau})=\exp({-\sum_{j=i+1}^n\sigma_A(j\Delta{x})\Delta{x}})=\prod_{j=i+1}^n\exp({-\sigma_A(j\Delta{x})\Delta{x}})
+$$
+定义：$t_i=\exp({-\sigma_A(i\Delta{x})\Delta{x}})$, $g_i=g(i\Delta{x})\Delta{x}$
+
+$j=i+1$ 是因为积分从 0 到 n 区间积分，但是采样从 1 到 n 端点采样。
+
+因此：
+$$
+\color{red}\begin{align*}
+I(s)&\approx I(0)\prod_{i=1}^{n}t_i+\sum_{i=1}^{n}g_i\prod_{j=i+1}^{n}t_j\\
+&=g_n+t_n(g_{n-1}+t_{n-1}(\cdots(g_1+t_1I(0))\cdots))
+\end{align*}
+$$
+
+```python
+def front2Back(t, g, I0):
+    # equation above
+    I = 0.0
+    T = 1.0
+    for i in range(n, 0, -1):
+        I = T * I + g[i]
+        T = T * t[i]
+    I = I + T * I0
+    return I
+def back2Front(t, g, I0):
+    # equation below
+    I = I0
+    for i in range(1, n + 1):
+        I = t[i] * I + g[i]
+    return I
+```
+
+### 4.2 The Particle Model
+
+如果 $g(s)=C(s)\sigma_A(s)$ 中的 $C$ 是常数的话：
+$$
+\begin{align*}
+\int_0^sg(t)\exp({-\int_t^s\sigma_A(\tau)\mathrm{d}\tau})\mathrm{d}t&=C\int_0^s\sigma_A(t)\exp({-\int_t^s\sigma_A(\tau)\mathrm{d}\tau})\mathrm{d}t\\
+&=C\int_0^s\frac{\mathrm{d}}{\mathrm{d}t}\exp({-\int_t^s\sigma_A(\tau)\mathrm{d}\tau})\mathrm{d}t\\
+&=C\left[1-\exp({-\int_0^s\sigma_A(\tau)\mathrm{d}\tau})\right]\\
+&=C(1-T(0,s))
+\end{align*}
+$$
+因此公式改为：
+$$
+\color{red}I(s)=I(0)T(0,s)+C(1-T(0,s))
+$$
+如果 $C$​ 是分段常数的话：
+$$
+\color{red}I(s)=\sum_{i=1}^{n}C_i(1-T((i-1)\Delta{x},i\Delta{x}))T(i\Delta{x},s)+I(0)T(0,s)
+$$
+由于我们把 $\sigma_A(s)$ 也看做分段常数：
+$$
+\color{red}I(s)=\sum_{i=1}^{n}C_i(1-\exp(-\sigma_{Ai}\Delta{x}))T(i\Delta{x},s)+I(0)T(0,s)
+$$
 
 
