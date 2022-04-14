@@ -10,11 +10,11 @@ Personal notes of read papers.
 
 ### Neural Volume Rendering
 
-2020 NeRF Representing Scenes as Neural Radiance Fields for View Synthesis
+2020 NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis
 
 2021 PlenOctrees for Real-time Rendering of Neural Radiance Fields
 
-2021 Plenoxels Radiance Fields without Neural Networks
+2021 Plenoxels: Radiance Fields without Neural Networks
 
 ### Other
 
