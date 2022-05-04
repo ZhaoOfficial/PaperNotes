@@ -1,4 +1,4 @@
-### Radon Transformation
+# Radon Transformation
 
 #### 问题描述
 
@@ -32,7 +32,7 @@ $$
 \mathcal{R}(\theta,\rho)&=\iint f(x, y)\cdot\delta(\rho-x\cos\theta-y\sin\theta)dxdy\\
 \end{align*}
 $$
-然后我们对 $\rho$ 做 Fourier 变换，也就是 Radon 逆变换
+然后我们对 $\rho$ 做 Fourier 变换
 $$
 \begin{align*}
 &\qquad\mathcal{F}\{\mathcal{R}(\theta,\rho)\}\\

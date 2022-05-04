@@ -89,6 +89,9 @@ $$
 其中 $\mathcal G_{\sigma}(\mathbf x)$ 和 $\mathcal G_c(\mathbf x)$ 由 $\mathbf x$ 所在格子三线性插值得来。
 
 $\mathcal G_{\sigma}\in\mathbb R^{I\times J\times K}$, $\mathcal G_c\in\mathbb R^{I\times J\times K\times P}$, $I,J,K$ 是沿着 $X,Y,Z$ 轴对应的分辨率，$P$ 是特征向量的通道数。
+$$
+\mathcal G_{\sigma}:\mathbb{R}^3\mapsto\mathbb{R}\quad\mathcal G_{c}:\mathbb{R}^3\mapsto\mathbb{R}^P
+$$
 
 ### 4.2 Factorizing Radiance Fields
 
@@ -204,3 +207,22 @@ Our compact CP-384 model (3.9MB) can even achieve a PSNR greater than 32 after 6
 #### Forward-facing scenes
 
 ## 7 Conclusion
+
+## B More Implementation Details
+
+This loss function:
+$$
+\mathcal{L}=\|C-\tilde{C}\|_2^2+\omega\cdot\mathcal{L}_{\mathrm{reg}}
+$$
+为了鼓励我们的张量因子参数的稀疏性，我们应用了标准的 L1 正则化，我们发现它可以有效地提高外推视图的质量，并在最终渲染中去除浮动/外部值。
+To encourage the sparsity in the parameters of our tensor factors, we apply the standard L1 regularization, which we find is effective in improving the quality in extrapolating views and removing floaters/outerliers in final renderings.
+$$
+\mathcal{L}_{\mathrm{L1}}=\frac{1}{N}\sum_{r=1}^{R_{\sigma}}(\|\mathbf{M}_{\sigma,r}\|+\|\mathbf{v}_{\sigma,r}\|)
+$$
+
+$$
+\mathcal{L}_{\mathrm{TV}}=\frac{1}{N}\sum\left(\sqrt{\Delta^2\mathcal{A}_{\sigma,r}^{m}}+0.1\cdot\sqrt{\Delta^2\mathcal{A}_{C,r}^{m}}\right)
+$$
+
+$\Delta^2$ 是矩阵或向量相邻元素的差分的平方。
+

@@ -16,9 +16,13 @@ Personal notes of read papers.
 
 2021 Plenoxels: Radiance Fields without Neural Networks
 
+2022 TensoRF: Tensorial Radiance Fields
+
 ### Other
 
 ### Rasterization
+
+1986 Data Structure for Soft Objects
 
 1987 Marching Cubes A High Resolution 3D Surface Construction Algorithm
 

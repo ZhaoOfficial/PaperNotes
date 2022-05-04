@@ -137,9 +137,6 @@ $$
 $$
 
 [能量性质 Energy]
-$$
-python cryodrgn\commands\train_nn.py data_job032\images.npy --poses data_job032\pose.pkl --ctf data_job032\ctf.pkl -n 25 -o 00_nn_50 --dim 1024 --layers 3
-$$
 
 ## A.2 离散 Hartley 变换 Discrete Hartley Transform
 
