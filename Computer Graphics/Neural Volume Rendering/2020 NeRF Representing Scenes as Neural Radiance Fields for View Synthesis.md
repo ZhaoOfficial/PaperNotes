@@ -104,7 +104,7 @@ $$
 T_i=\exp(-\sum_{j=1}^{i-1}\sigma_j\delta_j)\tag{3}
 $$
 这里用到了等价无穷小 $1-e^{-x}\sim x$，在图形学里面叫 $\alpha$ 混合。
-And $\delta_i=t_{i+1}-t_i$ is the distance between adjacent samples. This function reduces to **traditional alpha compositing** with alpha values $\alpha_i=1−exp(−\sigma_i\delta_i)$.
+And $\delta_i=t_{i+1}-t_i$ is the distance between adjacent samples. This function reduces to **traditional alpha compositing** with alpha values $\alpha_i=1−\exp(−\sigma_i\delta_i)$.
 
 ## 5 Optimizing a Neural Radiance Field
 

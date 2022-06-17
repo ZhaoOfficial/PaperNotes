@@ -13,7 +13,7 @@ Optical properties like color and opacity can then be assigned as functions of t
 ## 2 Absorption only
 
 $r$: 假设微粒是个球体，微粒半径 radius
-$A=\pi r^2$: 投影面积 projected area
+$A=\pi r^2$: 微粒的投影面积 projected area
 $\rho$: 单位体积微粒数量 the number of particles per unit volume
 $E$: 圆柱板底面面积 the area of the base of a cylindrical slab
 $\Delta s$: 圆柱板厚度 the thickness of a cylindrical slab
@@ -155,5 +155,4 @@ $$
 $$
 \color{red}I(s)=\sum_{i=1}^{n}C_i(1-\exp(-\sigma_{Ai}\Delta{x}))T(i\Delta{x},s)+I(0)T(0,s)
 $$
-
 
