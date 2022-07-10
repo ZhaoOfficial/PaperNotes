@@ -1,3 +1,5 @@
+# Literature Review of Grid Scene Representation
+
 ## 2021 PlenOctrees for Real-time Rendering of Neural Radiance Fields
 
 ### 1 Motivation
@@ -89,9 +91,28 @@ Find a more uniform regularizer (TV regularizer) for each scene.
 
 ## 2022 TensoRF: Tensorial Radiance Fields
 
+
+
 ## 2022 PREF: Phasorial Embedding Fields for Compact Neural Representations
 
-## 0 My Question
+### 0 My Question
+
+> Specifically, we first perform 1D FFT along one of the axes $u$ to obtain a intermediate map $\mathbf{P}_v[x^*,v]$, with $x^*=\{0,1,\dots,M-1\}$.
+
+对谁做一维 Fourier 变换？$\mathbf{P}[u,v]$ 吗？
+
+> $$
+\begin{align*}
+\mathbf{P}_{v}(x,v)&=\langle\mathbf{P}_v[x^*,v]\rangle\\
+f(x,y)&\approx\sum_{v=0}^{D}e^{j2\pi v\frac{y}{N}}\mathbf{P}_{v}(x,v)=\tilde{T}_*(\mathbf{P})
+\end{align*}
+$$
+
+直接先 $x$ 后 $y$ 的 FFT 真的合理吗？(Maybe 离散形式还挺合理)
+
+> Recall the TV loss can be computed as $\|\nabla_{x}f(x,y)\|_2+\|\nabla_{x}f(x,y)\|_2$.
+
+我没有找到任何有关 ATV 长这样的文章。别的文章都是：$\|\nabla_{x}f\|_1+\|\nabla_{y}f\|_1$。二范数和一范数差远了。
 
 ### 1 Motivation
 
