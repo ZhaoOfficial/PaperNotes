@@ -8,6 +8,8 @@ We optimize for a field of 3D-varying index of refraction (IoR) and trace light 
 ## 1 Introduction
 
 
+用于学习 3D 场捕捉场景几何的现有解决方案是基于沿直线路径的不透明或透明光传输。然而，在存在透明物体的情况下，光线会弯曲，即它会改变其方向。光路弯曲的精确方式取决于在 IoR 场的空间梯度上运行的某个 eikonal 方程，我们展示了该方程可以通过适当的公式在实践中求解 - 并在学习中微分。
+Existing solutions to learn 3D fields capturing scene geometry are based on opaque or transparent light transport along straight paths. In the presence of transparent objects, however, light bends, i.e., it changes its direction. The precise way in which light paths are curved depends on a certain eikonal equation operating on spatial gradients of the IoR field which we show can be solved - and differentiated over in learning - in practice with the appropriate formulation.
 
 ## 2 Related Work
 

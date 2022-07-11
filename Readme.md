@@ -55,9 +55,9 @@ Personal notes of read papers
 - [ ] Chapter 2 The Physics of Light Transport
     - [x] 2.1 Brief History
     - [x] 2.2 Models of Light
-    - [ ] 2.3 Radiometry
-    - [ ] 2.4 Light Emission
-    - [ ] 2.5 Interaction of Light with Surfaces
+    - [x] 2.3 Radiometry
+    - [x] 2.4 Light Emission
+    - [x] 2.5 Interaction of Light with Surfaces
     - [ ] 2.6 Rendering Equation
     - [ ] 2.7 Importance
     - [ ] 2.8 The Measurement Equation

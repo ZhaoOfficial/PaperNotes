@@ -11,22 +11,22 @@
 **光通量**：单位时间内流过表面的总能量，符号 $\Phi$，单位 $W$。
 **Flux**: The total energy flows through a surface per unit time, symbol $\Phi$, unit $W$.
 
-**辐照度**：单位表面积的入射辐射功率，符号 $E$，单位 $W/m^2$。
-**Irradiance**: The incident radiant power on a surface, per unit surface area, symbol $E$, unit $W/m^2$. 
+**辐照度**：单位表面积的*入射*辐射功率，符号 $E$，单位 $W/m^2$。
+**Irradiance**: The *incident* radiant power on a surface, per unit surface area, symbol $E$, unit $W/m^2$. 
 $$
-E=\frac{d\Phi}{dA}
+E=\frac{\mathrm{d}\Phi}{\mathrm{d}A}
 $$
-**辐射度**：单位表面积的出射辐射功率，符号 $B$，单位 $W/m^2$。
-**Radiosity**: The exitant radiant power per unit surface area, symbol $B$, unit $W/m^2$.
+**辐射度**：单位表面积的*出射*辐射功率，符号 $B$，单位 $W/m^2$。
+**Radiosity**: The *exitant* radiant power per unit surface area, symbol $B$, unit $W/m^2$.
 $$
-B=\frac{d\Phi}{dA}
+B=\frac{\mathrm{d}\Phi}{\mathrm{d}A}
 $$
-**辐射**：所有方向到达或离开表面某一点每单位立体角每单位投影面积的功率，符号 $L$，单位 $W/(m^2\cdot\text{rad})$
+**辐射**：从所有方向到达或离开表面某一点每单位立体角每单位投影面积的功率，符号 $L$，单位 $W/(m^2\cdot\text{rad})$
 **Radiance**: All the direction of power arrives at or leaves from a certain point on surface, per unit solid angle, per unit projected area, symbol $L$, unit $W/(m^2\cdot\text{rad})$.
 $$
-L=\frac{d^2\Phi}{d\omega dA^{\perp}}=\frac{d^2\Phi}{d\omega dA\cos\theta}
+L=\frac{\mathrm{d}^2\Phi}{\mathrm{d}\omega\mathrm{d}A^{\perp}}=\frac{\mathrm{d}^2\Phi}{\mathrm{d}\omega\mathrm{d}A\cos\theta}
 $$
-$dA$ 是到达或离开表面某一点附近的面积，$d\omega$ 是光源或照射面在某一点处的立体角微元。
+$\mathrm{d}A$ 是到达或离开表面某一点附近的面积，$\mathrm{d}\omega$ 是光源或照射面在某一点处的立体角微元。
 
 辐射度是一个随位置 $x$ 和方向向量 $\Theta$ 而变化的五维量，表示为 $L(x,\Theta)$。
 Radiance is a five-dimensional quantity that varies with position $x$ and direction vector $\Theta$, and is expressed as $L(x,\Theta)$.
@@ -36,20 +36,24 @@ Radiance is a five-dimensional quantity that varies with position $x$ and direct
 扩散理论处理物理量（例如能量、电荷和质量）的传输或流动。
 Transport theory deals with the transport or flow of physical quantities such as energy, charge, and mass.
 
-已知 $p(x)$ 是空间中某处的光子密度值，因此在微小空间内光子的数量是 $p(x)dV$。考虑在微小时间 $dt$ 内光子穿过了可微面 $dA$，穿过方向和可微面的法向夹角为 $\theta$。已知光速为 $c$，则穿过可微面的粒子数为：
+已知 $p(x)$ 是空间中某处的光子密度值，因此在微小空间内光子的数量是 $p(x)\mathrm{d}V$。考虑在微小时间 $\mathrm{d}t$ 内光子穿过了可微面 $\mathrm{d}A$，穿过方向和可微面的法向夹角为 $\theta$。已知光速为 $c$，则穿过可微面的粒子数为：
 $$
-p(x)(cdt)dA\cos\theta
+p(x)(c\mathrm{d}t)\mathrm{d}A\cos\theta
 $$
 考虑所有入射方向 $\omega$ 和入射的波长 $\lambda$，粒子数目就表示为：
 $$
-N=p(x, \omega, \lambda)cdtdA\cos\theta d\omega d\lambda
+N=p(x, \omega, \lambda)c\mathrm{d}t\mathrm{d}A\cos\theta\mathrm{d}\omega\mathrm{d}\lambda
 $$
 因此光通量就：
 $$
 \begin{align*}
-\Phi&\propto p(x, \omega, \lambda)cdA\cos\theta d\omega d\lambda\\
-\frac{\Phi}{dA\cos\theta d\omega}&\propto p(x, \omega, \lambda)cd\lambda
+\Phi&\propto p(x, \omega, \lambda)\mathrm{d}A\cos\theta\mathrm{d}\omega\mathrm{d}\lambda\\
+\frac{\Phi}{\mathrm{d}A\cos\theta\mathrm{d}\omega}&\propto p(x, \omega, \lambda)\mathrm{d}\lambda
 \end{align*}
+$$
+带入量子力学中单光子的性质 $E=h\nu,c=\lambda\nu$，则有：
+$$
+L(x,\omega)=\int p(x, \omega, \lambda)h\frac{c}{\lambda}\mathrm{d}\lambda
 $$
 由此，$\cos\theta$ 和辐射的关系可以有比较清晰的认识。
 
@@ -59,15 +63,15 @@ $$
 Let $L(x\rightarrow\Theta)$ represents radiance leaving point $x$ in direction $\Theta$, and $L(x\leftarrow\Theta)$ represents radiance arriving at point $x$ from direction $\Theta$. Then
 $$
 \begin{align*}
-\Phi&=\int_{A}\int_{\Omega}L(x\rightarrow\Theta)\cos\theta d\omega_{\Theta}dA_{x}\\
-E&=\int_{\Omega}L(x\leftarrow\Theta)\cos\theta d\omega_{\Theta}\\
-B&=\int_{\Omega}L(x\rightarrow\Theta)\cos\theta d\omega_{\Theta}\\
+\Phi&=\int_{A}\int_{\Omega}L(x\rightarrow\Theta)\cos\theta\mathrm{d}\omega_{\Theta}\mathrm{d}A_{x}\\
+E&=\int_{\Omega}L(x\leftarrow\Theta)\cos\theta\mathrm{d}\omega_{\Theta}\\
+B&=\int_{\Omega}L(x\rightarrow\Theta)\cos\theta\mathrm{d}\omega_{\Theta}\\
 \end{align*}
 $$
 辐射度是通过对可见光的波长域上的光谱辐射积分来计算的：
 Radiance is computed by integrating spectral radiance over the wavelength domain covering visible light. That is
 $$
-L(x\rightarrow\Theta)=\int_{\text{spectrum}}L(x\rightarrow\Theta,\lambda)d\lambda
+L(x\rightarrow\Theta)=\int_{\text{spectrum}}L(x\rightarrow\Theta,\lambda)\mathrm{d}\lambda
 $$
 
 ### 2.3.3 Properties of Radiance
@@ -81,16 +85,18 @@ L(x\to y)=L(y\gets x)
 $$
 $L(x\to y)$ 表示为：
 $$
-L(x\to y)=\frac{d^2\Phi}{(\cos\theta_xdA_x)d\omega_{x\gets dA_y}}
+L(x\to y)=\frac{\mathrm{d}^2\Phi}{(\cos\theta_x\mathrm{d}A_x)\mathrm{d}\omega_{x\gets\mathrm{d}A_y}}
 $$
 而 $L(y\gets x)$​ 表示为：
 $$
-L(y\gets x)=\frac{d^2\Phi}{(\cos\theta_ydA_y)d\omega_{y\gets dA_x}}
+L(y\gets x)=\frac{\mathrm{d}^2\Phi}{(\cos\theta_y\mathrm{d}A_y)\mathrm{d}\omega_{y\gets\mathrm{d}A_x}}
 $$
+其中 $\theta_{x},\theta_{y}$ 分别代表 $N_x,N_y$ 与 $xy$ 连线的夹角。
+
 由于：
 $$
-d\omega_{x\gets dA_y}=\frac{\cos\theta_ydA_y}{r^2_{xy}}\\
-d\omega_{y\gets dA_x}=\frac{\cos\theta_xdA_x}{r^2_{xy}}
+\mathrm{d}\omega_{x\gets\mathrm{d}A_y}=\frac{\cos\theta_y\mathrm{d}A_y}{r^2_{xy}}\\
+\mathrm{d}\omega_{y\gets\mathrm{d}A_x}=\frac{\cos\theta_x\mathrm{d}A_x}{r^2_{xy}}
 $$
 因此带入可得到 $L(x\to y)=L(y\gets x)$。
 
@@ -99,7 +105,24 @@ $$
 传感器（例如，相机或人眼）的响应与入射的辐射成正比，其中比例常数取决于传感器的几何形状。
 The response of sensors (for example, cameras or the human eye) is proportional to the radiance incident upon them, where the constant of proportionality depends on the geometry of the sensor.
 
-### 2.3.4 太阳到地球的辐照度
+### 2.3.4 Examples 太阳到地球的辐照度
+
+Diffuse Emitter
+
+漫反射发射器从其所有表面点向所有方向发射相等的辐射
+A diffuse emitter emits equal radiance in all directions from all its surface points:
+$$
+L(x\to\Theta)=L
+$$
+
+$$
+\begin{align*}
+\Phi&=\int_{A}\int_{\Omega}L(x\rightarrow\Theta)\cos\theta\mathrm{d}\omega_{\Theta}\mathrm{d}A_{x}\\
+&=\int_{A}\int_{\Omega}L\cos\theta\mathrm{d}\omega_{\Theta}\mathrm{d}A_{x}\\
+&=L\int_{A}\mathrm{d}A_{x}\int_{\Omega}\cos\theta\mathrm{d}\omega_{\Theta}\\
+&=\pi LA\\
+\end{align*}
+$$
 
 假设太阳是各向均匀的辐射，已知太阳的功率是 $\Phi=3.91\times10^{26}W$，太阳半径 $r=6.96\times10^{8}m$，则太阳的辐射为：
 $$
@@ -116,26 +139,31 @@ $$
 
 ## 2.4 Light Emission
 
+精确全局照明的计算需要为每个光源指定以下三种分布：空间、方向和光谱强度分布。
+The computation of accurate global illumination requires the specification of the following three distributions for each light source: spatial, directional, and spectral intensity distribution.
+
 ## 2.5 Interaction of Light with Surfaces
 
-我们假设入射到表面的光以相同的波长和相同的时间出射。
-We assume that light incident at a surface exits at the same wavelength and same time.
+<u>我们假设入射到表面的光以相同的波长和相同的时间出射。</u>
+<u>We assume that light incident at a surface exits at the same wavelength and same time.</u>
 
 ### 2.5.1 Bidirectional Reflectance Distribution Function BRDF
 
 在最一般的情况下，光可以从入射方向 $\Psi$ 进入表面上的点 $\mathbf p$，并且可以从出射方向 $\Theta$ 离开表面上的点 $\mathbf q$ 。双向表面散射反射率分布函数。
 In the most general case, light can enter some surface at a point $\mathbf p$ and incident direction $\Psi$ and can leave the surface at some other point $\mathbf q$ and exitant direction $\Theta$. Bidirectional surface scattering reflectance distribution function **BSSRDF**.
 
-点 $x$ 处的 BRDF 定义为从出射方向 $\Theta$ 上反射的辐射微分与通过立体角微分 $d\omega_{\Psi}$ 入射的辐射微分之比：
-The BRDF at a point $x$ is defined as the ratio of the differential radiance reflected in an exitant direction $\Theta$, and the differential irradiance incident through a differential solid angle $d\omega_{\Psi}$, the BRDF is:
+点 $x$ 处的 BRDF 定义为从出射方向 $\Theta$ 上反射的辐射微分与通过立体角微分 $\mathrm{d}\omega_{\Psi}$ 入射的辐射微分之比：
+The BRDF at a point $x$ is defined as the ratio of the differential radiance reflected in an exitant direction $\Theta$, and the differential irradiance incident through a differential solid angle $\mathrm{d}\omega_{\Psi}$, the BRDF is:
 $$
 \begin{align*}
-f_r(x, \Psi\rightarrow\Theta)&=\frac{dL(x\rightarrow\Theta)}{dE(x\leftarrow\Psi)}\\
-&=\frac{dL(x\rightarrow\Theta)}{L(x\leftarrow\Psi)\cos(N_{x},\Psi)d\omega_{\Psi}}
+f_r(x, \Psi\rightarrow\Theta)&=\frac{\mathrm{d}L(x\rightarrow\Theta)}{\mathrm{d}E(x\leftarrow\Psi)}\\
+&=\frac{\mathrm{d}L(x\rightarrow\Theta)}{L(x\leftarrow\Psi)\cos(N_{x},\Psi)\mathrm{d}\omega_{\Psi}}
 \end{align*}
 $$
 
 $N_{x}$ 是 $x$ 处的法向量。
+
+<u>BRDF 的意义是衡量了表面某处将一束入射光线散射到整个空间的能力。</u>
 
 ### 2.5.2 Properties of the BRDF
 
@@ -146,10 +174,11 @@ The BRDF can take any positive value and can vary with wavelength.
 
 #### Dimension
 
-BRDF 是定义在表面上每个点的四维函数； 二维对应入射方向，二维对应出射方向。
+BRDF 是定义在表面上每个点的四维函数；二维对应入射方向，二维对应出射方向。
 The BRDF is a four-dimensional function defined at each point on a surface; two dimensions correspond to the incoming direction, and two dimensions correspond to the outgoing direction.
 
-BRDF 一般来说是各向异性的 anisotropic.
+BRDF 一般来说是各向异性的 (anisotropic)。 也就是说，如果曲面围绕曲面法线旋转，$f_r$ 的值会发生变化。
+That is, if the surface is rotated about the surface normal, the value of $f_r$ will change.
 
 #### Reciprocity
 
@@ -163,8 +192,8 @@ $$
 Therefore, the BRDF behaves as a linear function with respect to all incident directions.
 $$
 \begin{align*}
-dL(x\to\Theta)&=f_r(x, \Psi\rightarrow\Theta)dE(x\gets\Psi)\\
-L(x\to\Theta)&=\int_{\Omega}f_r(x, \Psi\rightarrow\Theta)L(x\gets\Psi)\cos(N_{x},\Psi)d\omega_{\Psi}\\
+\mathrm{d}L(x\to\Theta)&=f_r(x, \Psi\rightarrow\Theta)\mathrm{d}E(x\gets\Psi)\\
+L(x\to\Theta)&=\int_{\Omega}f_r(x, \Psi\rightarrow\Theta)L(x\gets\Psi)\cos(N_{x},\Psi)\mathrm{d}\omega_{\Psi}\\
 \end{align*}
 $$
 
@@ -175,23 +204,23 @@ The law of conservation of energy requires that the total amount of power reflec
 
 辐照度：
 $$
-E=\int_{\Omega_x}L(x\gets\Psi)\cos(N_{x},\Psi)d\omega_{\Psi}
+E=\int_{\Omega_x}L(x\gets\Psi)\cos(N_{x},\Psi)\mathrm{d}\omega_{\Psi}
 $$
 辐射度：
 $$
-B=\int_{\Omega_x}L(x\to\Theta)\cos(N_{x},\Theta)d\omega_{\Theta}
+B=\int_{\Omega_x}L(x\to\Theta)\cos(N_{x},\Theta)\mathrm{d}\omega_{\Theta}
 $$
 由 BRDF 可知：
 $$
-f_r(x, \Psi\rightarrow\Theta)L(x\leftarrow\Psi)\cos(N_{x},\Psi)d\omega_{\Psi}=dL(x\rightarrow\Theta)
+f_r(x, \Psi\rightarrow\Theta)L(x\leftarrow\Psi)\cos(N_{x},\Psi)\mathrm{d}\omega_{\Psi}=\mathrm{d}L(x\rightarrow\Theta)
 $$
 因此辐射度可以表示为：
 $$
-B=\int_{\Omega_x}\int_{\Omega_x}f_r(x, \Psi\rightarrow\Theta)L(x\leftarrow\Psi)\cos(N_{x},\Psi)d\omega_{\Psi}\cos(N_{x},\Theta)d\omega_{\Theta}
+B=\int_{\Omega_x}\int_{\Omega_x}f_r(x, \Psi\rightarrow\Theta)L(x\leftarrow\Psi)\cos(N_{x},\Psi)\mathrm{d}\omega_{\Psi}\cos(N_{x},\Theta)\mathrm{d}\omega_{\Theta}
 $$
 由 $B\le E$ 可得：
 $$
-\frac{\int_{\Omega_x}\int_{\Omega_x}f_r(x, \Psi\rightarrow\Theta)L(x\leftarrow\Psi)\cos(N_{x},\Psi)d\omega_{\Psi}\cos(N_{x},\Theta)d\omega_{\Theta}}{\int_{\Omega_x}L(x\gets\Psi)\cos(N_{x},\Psi)d\omega_{\Psi}}\le1
+\frac{\int_{\Omega_x}\int_{\Omega_x}f_r(x, \Psi\rightarrow\Theta)L(x\leftarrow\Psi)\cos(N_{x},\Psi)\mathrm{d}\omega_{\Psi}\cos(N_{x},\Theta)\mathrm{d}\omega_{\Theta}}{\int_{\Omega_x}L(x\gets\Psi)\cos(N_{x},\Psi)\mathrm{d}\omega_{\Psi}}\le1
 $$
 
 ### 2.5.3 BRDF Examples
@@ -199,31 +228,45 @@ $$
 #### Diffuse Surfaces
 
 $$
-f_r(x, \Psi\rightarrow\Theta)=c
+f_r(x, \Psi\rightarrow\Theta)=c=\frac{\rho_d}{\pi}
 $$
 
-#### Specular Reflection
+$\rho_d$ 是反照率。
+
+#### Specular Surface
+
+##### Specular Reflection
 
 反射光方向 $R=2(N_{x}\cdot\Psi)N_{x}-\Psi$
 $$
 f_r(x, \Psi\rightarrow\Theta)\propto\delta(R-\Theta)
 $$
 
-#### Specular Refraction
+##### Specular Refraction
 
+Snell's law:
+$$
+\eta_1\sin\theta_1=\eta_2\sin\theta_2
+$$
 折射光方向：
 $$
-T=-\frac{\eta_1}{\eta_2}\Psi+N_{x}\left(\frac{\eta_1}{\eta_2}(N_{x}\cdot\Psi)-\sqrt{1-(\frac{\eta_1}{\eta_2})^2(1-(N_{x}\cdot\Psi)^2)}\right)
+T=-\frac{\eta_1}{\eta_2}\Psi+N_{x}\left(\frac{\eta_1}{\eta_2}(N_{x}\cdot\Psi)-\sqrt{1-\left(\frac{\eta_1}{\eta_2}\right)^2(1-(N_{x}\cdot\Psi)^2)}\right)
 $$
 
-#### Reciprocity for transparent surfaces
+##### Reciprocity for transparent surfaces
 
 当一束光从光疏介质进入光密介质时，它会被压缩。因此，垂直于折射方向的单位面积光能变高。
 When a pencil of light enters a dense medium from a less dense medium, it gets compressed. Therefore, the light energy per unit area perpendicular to the pencil direction becomes higher.
 
-#### Fresnel Equations
+光线密度的变化是介质折射率的平方比：$(\eta_2/\eta_1)^2$。
+The change in ray density is the square ratio of the refractive indices of the media: $(\eta_2/\eta_1)^2$.
 
-偏振光的两个分量，$r_p$和$r_s$，分别指的是平行和垂直分量。
+##### Fresnel Equations
+
+当光线照射到一个完全光滑的表面时，反射的光能取决于光的波长、表面的几何形状以及光的入射方向。
+When light hits a perfectly smooth surface, the light energy that is reflected depends on the wavelength of light, the geometry at the surface, and the incident direction of the light.
+
+偏振光的两个分量，$r_p$ 和 $r_s$，分别指的是平行和垂直分量。
 The two components of the polarized light, $r_p$ and $r_s$​, referring to the parallel and perpendicular.
 $$
 r_p=\frac{\eta_2\cos\theta_1-\eta_1\cos\theta_2}{\eta_2\cos\theta_1+\eta_1\cos\theta_2}\\
@@ -237,25 +280,48 @@ Most surfaces are neither ideally diffuse nor ideally specular but exhibit a com
 
 ### 2.5.4 Shading Models
 
-#### Lambert’s model
+##### Lambert’s model
 
 The BRDF is a constant.
 
-#### Phong model
+##### Phong model
 
 反射光方向 $R=2(N_{x}\cdot\Psi)N_{x}-\Psi$
 $$
-f_r(x, \Psi\rightarrow\Theta)=\underbrace{k_s\frac{(R\cdot\Theta)^n}{N_{x}\cdot\Phi}}_{\text{Specular}}+\underbrace{k_d}_{\text{Diffuse}}
+f_r(x, \Psi\rightarrow\Theta)=\underbrace{k_s\frac{(R\cdot\Theta)^n}{N_{x}\cdot\Psi}}_{\text{Specular}}+\underbrace{k_d}_{\text{Diffuse}}
 $$
 
-#### Blinn-Phong model
+##### Blinn-Phong model
 
-中间向量 $H=\Theta-\Psi$
+中间向量 $H=(\Theta+\Psi)/2$
 $$
-f_r(x, \Psi\rightarrow\Theta)=\underbrace{k_s\frac{(N_{x}\cdot H)^n}{N_{x}\cdot\Phi}}_{\text{Specular}}+\underbrace{k_d}_{\text{Diffuse}}
+f_r(x, \Psi\rightarrow\Theta)=\underbrace{k_s\frac{(N_{x}\cdot H)^n}{N_{x}\cdot\Psi}}_{\text{Specular}}+\underbrace{k_d}_{\text{Diffuse}}
 $$
 它不是能量守恒的，它不满足亥姆霍兹的互易性，也不能捕捉到大多数真实材料的行为。
 It is not energy conserving, it does not satisfy Helmholtz’s reciprocity, and it does not capture the behavior of most real materials.
+
+##### Modified Blinn-Phong model
+
+$$
+f_r(x, \Psi\rightarrow\Theta)=\underbrace{k_s(N_{x}\cdot H)^n}_{\text{Specular}}+\underbrace{k_d}_{\text{Diffuse}}
+$$
+
+#### Physically Based Shading Models
+
+##### Cook-Torrance model
+
+| Symbols | Descriptions |
+| :-----: | :----------: |
+|   $F$   |              |
+
+
+
+Cook-Torrance 模型包括一个微平面模型，该模型假设一个表面是由一些小的光滑平面小平面的随机集合组成的。
+The Cook-Torrance model includes a microfacet model that assumes that a surface is made of a random collection of small smooth planar facets.
+$$
+f_r(x, \Psi\rightarrow\Theta)=\frac{F(\beta)}{\pi}\frac{D(\theta_h)G}{(N\cdot\Psi)(N\cdot\Theta)}+k_d
+$$
+
 
 ## 2.6 Rendering Equation
 
