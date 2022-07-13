@@ -87,7 +87,7 @@ $L(x\to y)$ 表示为：
 $$
 L(x\to y)=\frac{\mathrm{d}^2\Phi}{(\cos\theta_x\mathrm{d}A_x)\mathrm{d}\omega_{x\gets\mathrm{d}A_y}}
 $$
-而 $L(y\gets x)$​ 表示为：
+而 $L(y\gets x)$ 表示为：
 $$
 L(y\gets x)=\frac{\mathrm{d}^2\Phi}{(\cos\theta_y\mathrm{d}A_y)\mathrm{d}\omega_{y\gets\mathrm{d}A_x}}
 $$
@@ -177,7 +177,7 @@ The BRDF can take any positive value and can vary with wavelength.
 BRDF 是定义在表面上每个点的四维函数；二维对应入射方向，二维对应出射方向。
 The BRDF is a four-dimensional function defined at each point on a surface; two dimensions correspond to the incoming direction, and two dimensions correspond to the outgoing direction.
 
-BRDF 一般来说是各向异性的 (anisotropic)。 也就是说，如果曲面围绕曲面法线旋转，$f_r$ 的值会发生变化。
+BRDF 一般来说是各向异性的 (anisotropic)。也就是说，如果表面围绕表面法线旋转，$f_r$ 的值会发生变化。
 That is, if the surface is rotated about the surface normal, the value of $f_r$ will change.
 
 #### Reciprocity
@@ -267,7 +267,7 @@ The change in ray density is the square ratio of the refractive indices of the m
 When light hits a perfectly smooth surface, the light energy that is reflected depends on the wavelength of light, the geometry at the surface, and the incident direction of the light.
 
 偏振光的两个分量，$r_p$ 和 $r_s$，分别指的是平行和垂直分量。
-The two components of the polarized light, $r_p$ and $r_s$​, referring to the parallel and perpendicular.
+The two components of the polarized light, $r_p$ and $r_s$, referring to the parallel and perpendicular.
 $$
 r_p=\frac{\eta_2\cos\theta_1-\eta_1\cos\theta_2}{\eta_2\cos\theta_1+\eta_1\cos\theta_2}\\
 r_p=\frac{\eta_1\cos\theta_1-\eta_2\cos\theta_2}{\eta_1\cos\theta_1+\eta_2\cos\theta_2}\\
@@ -310,46 +310,71 @@ $$
 
 ##### Cook-Torrance model
 
-| Symbols | Descriptions |
-| :-----: | :----------: |
-|   $F$   |              |
+|    Symbols    |                   Descriptions                   |
+| :-----------: | :----------------------------------------------: |
+|  $F(\beta)$   |   Fresnel reflectance, $F=(|r_p|^2+|r_s|^2)/2$   |
+|    $\beta$    | the angle between $\Psi$ and $H=(\Psi+\Theta)/2$ |
+| $D(\theta_h)$ |           the microfacet distribution            |
+|  $\theta_h$   |  the angle between $N$ and $H=(\Psi+\Theta)/2$   |
+|      $G$      |            a geometric shadowing term            |
 
-
-
-Cook-Torrance 模型包括一个微平面模型，该模型假设一个表面是由一些小的光滑平面小平面的随机集合组成的。
+最常见的分布之一是 Beckmann 的分布：
+One of the most common distributions is the distribution by Beckmann:
+$$
+D(\theta_h)=\frac{1}{m^2\cos^4\theta_h}\exp\left(-\left(\frac{\tan\theta_h}{m}\right)^2\right)
+$$
+$m$ 是微表面的均方根斜率，它表示表面粗糙度。
+$m$ is the root-mean-square slope of the microfacets, and it captures surface roughness.
+$$
+G = \min\left\{1,\frac{2(N\cdot H)(N\cdot\Theta)}{\Theta\cdot H},\frac{2(N\cdot H)(N\cdot\Psi)}{\Theta\cdot H}\right\}
+$$
+Cook-Torrance 模型包括一个微表面模型，该模型假设一个表面是由一些小的光滑平面小平面的随机集合组成的。
 The Cook-Torrance model includes a microfacet model that assumes that a surface is made of a random collection of small smooth planar facets.
 $$
 f_r(x, \Psi\rightarrow\Theta)=\frac{F(\beta)}{\pi}\frac{D(\theta_h)G}{(N\cdot\Psi)(N\cdot\Theta)}+k_d
 $$
 
+#### Empirical Models
+
+| Symbols  |            Descriptions            |
+| :------: | :--------------------------------: |
+| $\rho_d$ |      the diffuse reflectance       |
+| $\rho_s$ |      the specular reflectance      |
+| $\alpha$ | a measure of the surface roughness |
+
+$$
+f_r(x, \Psi\rightarrow\Theta)=\frac{\rho_d}{\pi}+\rho_s\frac{\exp\left(-\tan^2\theta_h/\alpha^2\right)}{4\pi\alpha^2\sqrt{(N\cdot\Psi)(N\cdot\Theta)}}
+$$
 
 ## 2.6 Rendering Equation
 
 ### 2.6.1 Hemispherical Formulation
 
-我们假设 $L_e(x\to\Theta)$ 表示表面在 $x$ 处从 $\Theta$ 方向向外上发出的辐射，而 $L_r(x\to\Theta )$ 表示在 $\Theta$ 方向上由表面反射的辐射。
-Let us assume that $L_e(x\to\Theta)$ represents the radiance emitted by the surface at $x$ and in the outgoing direction $\Theta$, and $L_r(x\to\Theta)$ represents the radiance that is reflected by the surface at in that direction $\Theta$.
+我们假设 $L_e(x\to\Theta)$ 表示表面在 $x$ 处从 $\Theta$ 方向向外上**发出**的辐射，而 $L_r(x\to\Theta )$ 表示在 $\Theta$ 方向上由表面**反射**的辐射。
+Let us assume that $L_e(x\to\Theta)$ represents the radiance **emitted** by the surface at $x$ and in the outgoing direction $\Theta$, and $L_r(x\to\Theta)$ represents the radiance that is **reflected** by the surface at in that direction $\Theta$.
 $$
 L(x\to\Theta)=L_e(x\to\Theta)+L_r(x\to\Theta)\\
-L(x\to\Theta)=L_e(x\to\Theta)+\int_{\Omega_{x}}f_r(x, \Psi\rightarrow\Theta)L(x\gets\Psi)\cos(N_{x},\Psi)d\omega_{\Psi}
+L(x\to\Theta)=L_e(x\to\Theta)+\int_{\Omega_{x}}f_r(x, \Psi\rightarrow\Theta)L(x\gets\Psi)\cos(N_{x},\Psi)\mathrm{d}\omega_{\Psi}
 $$
 
 ### 2.6.2 Area Formulation
 
-令 $r(x,\Psi)$ 是光线方程：
-$$
-r(x,\Psi)=\{y:y=x+\tau\Psi\}\\
-\tau=\min\{t:t>0,x+t\Psi\in A\}
-$$
-$A$ 是表面。
+|   Symbols   |                         Descriptions                         |
+| :---------: | :----------------------------------------------------------: |
+|     $A$     |                the collection of all surfaces                |
+|   $\tau$    | $\tau=\min\{t:t>0,x+t\Psi\in A\}$ the closest intersetion point |
+| $r(x,\Psi)$ |  $r(x,\Psi)=\{y:y=x+\tau\Psi\}$ the *ray-casting* operation  |
+|  $V(x,y)$   |              the visibility between two points               |
 
-令 $V(x,y)$ 为 $x$ 和 $y$ 两点的可视指示函数。
+可见性函数是使用光线投射操作计算的：如果存在一些 $\Psi$ 使得 $r(x,\Psi)=y$，则 $x$ 和 $y$ 是相互可见的。
+The visibility function is computed using the ray-casting operation: $x$ and $y$ are mutually visible if there exists some $\Psi$ such that $r(x,\Psi)=y$.
 
 则从曲面 $A$ 上的一点 $y$ 到 $x$ 上的渲染方程可以改写为：
 $$
 \begin{align*}
-L(x\to\Theta)&=L_e(x\to\Theta)+\int_{\Omega_{x}}f_r(x, \Psi\rightarrow\Theta)L(x\gets\Psi)\cos(N_{x},\Psi)d\omega_{\Psi}\\
-&=L_e(x\to\Theta)+\int_{A}f_r(x,\Psi\rightarrow\Theta)L(y\to-\Psi)V(x,y)\frac{\cos(N_{x},\Psi)\cos(N_y,-\Psi)}{r^2_{xy}}dA_y\\
+L(x\to\Theta)&=L_e(x\to\Theta)+\int_{\Omega_{x}}f_r(x, \Psi\rightarrow\Theta)L(x\gets\Psi)\cos(N_{x},\Psi)\mathrm{d}\omega_{\Psi}\\
+&=L_e(x\to\Theta)\\
+&+\int_{A}f_r(x,\Psi\rightarrow\Theta)L(y\to-\Psi)V(x,y)\frac{\cos(N_{x},\Psi)\cos(N_y,-\Psi)}{r^2_{xy}}\mathrm{d}A_y\\
 \end{align*}
 $$
 
@@ -360,8 +385,8 @@ Direct illumination is the illumination that arrives at a surface directly from 
 $$
 \begin{align*}
 L_{r}(x\to\Theta)&=L_{\text{direct}}+L_{\text{indirect}}\\
-L_{\text{direct}}&=\int_{A}f_r(x,\overrightarrow{xy}\rightarrow\Theta)L(y\to\overrightarrow{yx})V(x,y)\frac{\cos(N_{x},\Psi)\cos(N_y,-\Psi)}{r^2_{xy}}dA_y\\
-L_{\text{indirect}}&=\int_{\Omega_x}f_r(x,\Psi\to\Theta)L_r(r(x,\Psi)\to-\Psi)\cos(N_{x},\Psi)d\omega_{\Psi}\\
+L_{\text{direct}}&=\int_{A}f_r(x,\overrightarrow{xy}\rightarrow\Theta)L(y\to\overrightarrow{yx})V(x,y)\frac{\cos(N_{x},\Psi)\cos(N_y,-\Psi)}{r^2_{xy}}\mathrm{d}A_y\\
+L_{\text{indirect}}&=\int_{\Omega_x}f_r(x,\Psi\to\Theta)L_r(r(x,\Psi)\to-\Psi)\cos(N_{x},\Psi)\mathrm{d}\omega_{\Psi}\\
 \end{align*}
 $$
 $L_{\text{direct}}$ 是 $y$ 直接照射到 $x$ 的辐射。
@@ -370,4 +395,24 @@ $L_{\text{indirect}}$ 是各个方向的环境光。
 
 ## 2.7 Importance
 
+响应函数：每个像素都充当传感器，并了解它如何响应落在传感器上的光能。
+Response function: each pixel functions as a sensor with some notion of how it responds to the light energy that falls on the sensor.
+$$
+W(x\to\Theta)=W_e(x\to\Theta)+\int_{\Omega_x}{\color{red}f_r(x,\Psi\gets\Theta)}W(x\gets\Psi)\cos(N_x,\Psi)\mathrm{d}\omega_{\Psi}
+$$
+如果在特定图像中表面 $i$ 是肉眼可见的，则 $W_e(i)$ 将捕获表面对图像的重要程度（图像上表面投影面积的某种度量）。如果在图像中表面 $j$ 也是可见的，并且表面 $i$ 将光反射到表面 $j$，那么由于 $j$ 的重要性，$i$ 将间接地更加重要。因此，当能量从 $i$ 流向$j$ 时，重要性从 $j$ 流向 $i$。
+If surface $i$ is visible to the eye in a particular image, then $W_e(i)$ will capture the extent to which the surface is important to the image (some measure of the projected area of the surface on the image). If surface $j$ is also visible in an image and surface $i$ reflects light to surface $j$, then, due to the importance of $j$, $i$ will indirectly be even more important. Thus, while energy flows from $i$ to $j$, importance flows from $j$ to $i$.
+
 ## 2.8 The Measurement Equation
+
+渲染方程描述了场景中光能的稳态分布。重要性方程描述了表面对图像的相对重要性。测量方程描述了全局照明算法必须解决的问题。
+The rendering equation formulates the steady-state distribution of light energy in the scene. The importance equation formulates the relative importanceof surfaces to the image. The measurement equation formulates the problem that a global illumination algorithm must solve.
+
+对于图像中的每个像素 $j$，$M_j$ 表示通过该像素 $j$ 的辐射度测量值。
+For each pixel $j$ in an image, $M_j$ represents the measurement of radiance through that pixel $j$​.
+$$
+M_j=\int W(x\gets\Psi)L(x\gets\Psi)\cos(N_x,\Psi)\mathrm{d}A_x\mathrm{d}_{\omega_{\Psi}}
+$$
+我们在这里假设传感器是场景的一部分，以便我们可以在它们的表面上积分。
+We assume here that the sensors are part of the scene so that we can integrate over their surface.
+

@@ -52,18 +52,18 @@ Personal notes of read papers
     - [x] 1.1 What Is Realistic Image Synthesis?
     - [x] 1.2 Structure of this Book
     - [x] 1.3 How to Use this Book
-- [ ] Chapter 2 The Physics of Light Transport
+- [x] Chapter 2 The Physics of Light Transport
     - [x] 2.1 Brief History
     - [x] 2.2 Models of Light
     - [x] 2.3 Radiometry
     - [x] 2.4 Light Emission
     - [x] 2.5 Interaction of Light with Surfaces
-    - [ ] 2.6 Rendering Equation
-    - [ ] 2.7 Importance
-    - [ ] 2.8 The Measurement Equation
-    - [ ] 2.9 Summary
+    - [x] 2.6 Rendering Equation
+    - [x] 2.7 Importance
+    - [x] 2.8 The Measurement Equation
+    - [x] 2.9 Summary
 - [ ] 3 Monte Carlo Methods
-    - [ ] 3.1 Brief History
+    - [x] 3.1 Brief History
     - [ ] 3.2 Why Are Monte Carlo Techniques Useful?
     - [ ] 3.3 Review of Probability Theory
     - [ ] 3.4 Monte Carlo Integration
@@ -117,10 +117,10 @@ Personal notes of read papers
     - [ ] A.2 Light Source Sampling Classes
     - [ ] A.3 Support Classes
     - [ ] A.4 Example Code Fragments
-- [ ] B Hemispherical Coordinates
-    - [ ] B.1 Hemispherical Coordinates
-    - [ ] B.2 Solid Angle
-    - [ ] B.3 Integrating over the Hemisphere
-    - [ ] B.4 Hemisphere-Area Transformation
+- [x] B Hemispherical Coordinates
+    - [x] B.1 Hemispherical Coordinates
+    - [x] B.2 Solid Angle
+    - [x] B.3 Integrating over the Hemisphere
+    - [x] B.4 Hemisphere-Area Transformation
 - [ ] C Theoretical Analysis of Stochastic Relaxation Radiosity
 
