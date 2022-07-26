@@ -26,8 +26,30 @@ $$
 
 ### 8.1.3 Absorption
 
+光子沿其传播方向每单位距离被体积吸收的概率称为吸收系数 $\sigma_{a}(z)$（单位 [$m^{-1}$]）。
+The probability that a photon gets absorbed in a volume, per unit of distance along its direction of propagation, is called the absorption coefficie $\sigma_{a}(z)$ (units [$m^{-1}$]).
 
+此外，吸收通常是各向同性的：一个光子无论其飞行方向如何，都有相同的机会被吸收。这对于单个粒子的吸收很少是正确的，但在大多数介质中，粒子是随机定向的，因此可以观察到它们的平均定向吸收（以及散射）特性。
+In addition, absorption is usually isotropic: a photon has the same chance of being absorbed regardless of its direction of flight. This is rarely true for ab sorptionby a single particle, but in most media, particles are randomly oriented so that their average directional absorption (and also scattering) characteristics are observed.
 
+Ray from $x$ to $y$, direction $\Theta$, $z=x+s\Theta$.
+$$
+\begin{align*}
+L(z+\Delta{s}\cdot\Theta\to\Theta)&=L(z\to\Theta)-L(z\to\Theta)\sigma_a(z)\Delta{s}\\
+\frac{\mathrm{d}L(z\to\Theta)}{\mathrm{d}s}&=-L(z\to\Theta)\sigma_a(z)\\
+L(z\to\Theta)&=L(x\to\Theta)\exp\left(-\int_0^s\sigma_a(x+t\Theta)\mathrm{d}t\right)
+\end{align*}
+$$
+
+### 8.1.4 Out-Scattering, Extinction Coefficient, and Albedo
+
+Out-scattering: scattering coefficient $\sigma_s(z)$ (units [$m^{-1}$]).
+
+消光系数 $\sigma_t(z)=\sigma_a(z)+\sigma_s(z)$ (units [$m^{-1}$]) 给出了光子沿着飞行路径的每单位距离与介质碰撞（吸收或散射）的概率。
+The extinction coefficiet $\sigma_t(z)=\sigma_a(z)+\sigma_s(z)$ (units [$m^{-1}$]) gives us the probability per unit distance along the path of flight that a photon collides (absorbs or scatters) with the medium.
+$$
+L(z\to\Theta)=L(x\to\Theta)\exp\left(-\int_0^s\sigma_t(x+t\Theta)\mathrm{d}t\right)
+$$
 
 
 

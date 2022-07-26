@@ -1,6 +1,6 @@
 # Paper Notes
 
-Personal notes of read papers
+Personal notes of read papers and books.
 
 # Finished Notes
 
@@ -15,6 +15,8 @@ Personal notes of read papers
 2021 PlenOctrees for Real-time Rendering of Neural Radiance Fields
 
 2021 Plenoxels: Radiance Fields without Neural Networks
+
+2021 Ref-NeRF Structured View-Dependent Appearance for Neural Radiance Fields
 
 2022 TensoRF: Tensorial Radiance Fields
 
@@ -64,9 +66,9 @@ Personal notes of read papers
     - [x] 2.9 Summary
 - [ ] 3 Monte Carlo Methods
     - [x] 3.1 Brief History
-    - [ ] 3.2 Why Are Monte Carlo Techniques Useful?
-    - [ ] 3.3 Review of Probability Theory
-    - [ ] 3.4 Monte Carlo Integration
+    - [x] 3.2 Why Are Monte Carlo Techniques Useful?
+    - [x] 3.3 Review of Probability Theory
+    - [x] 3.4 Monte Carlo Integration
     - [ ] 3.5 Sampling Random Variables
     - [ ] 3.6 Variance Reduction
     - [ ] 3.7 Summary

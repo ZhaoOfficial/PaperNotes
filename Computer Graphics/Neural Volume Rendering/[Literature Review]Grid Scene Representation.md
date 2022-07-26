@@ -4,7 +4,7 @@
 
 ### 1 Motivation
 
-Accelerating neural rendering in real-time. For NeRF, rendering an 800 * 800 picture takes 30 seconds.
+Accelerating neural rendering in real-time. For NeRF, rendering an $800 * 800$ picture takes 30 seconds.
 
 ### 2 Methods
 
@@ -21,7 +21,7 @@ $$
 
 #### Sparsity prior:
 
-Without any regularization, the model is free to generate arbitrary geometry in unobserved regions. While this does not directly worsen image quality, it would adversely impact our conversion process as the extra geometry occupies significant voxel space. Then they proposed a sparsity prior:
+Without any regularization, the model is free to generate arbitrary geometry in unobserved regions. While this does not directly worsen image quality, it would adversely impact our conversion process as the extra geometry occupies significant voxel space. Then they proposed **a sparsity prior**:
 $$
 \mathcal L_{\text{sparsity}}=\frac{1}{K}\sum_{k=1}^{K}|1-\exp(-\lambda\sigma_k)|
 $$

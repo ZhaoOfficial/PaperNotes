@@ -270,7 +270,7 @@ When light hits a perfectly smooth surface, the light energy that is reflected d
 The two components of the polarized light, $r_p$ and $r_s$, referring to the parallel and perpendicular.
 $$
 r_p=\frac{\eta_2\cos\theta_1-\eta_1\cos\theta_2}{\eta_2\cos\theta_1+\eta_1\cos\theta_2}\\
-r_p=\frac{\eta_1\cos\theta_1-\eta_2\cos\theta_2}{\eta_1\cos\theta_1+\eta_2\cos\theta_2}\\
+r_s=\frac{\eta_1\cos\theta_1-\eta_2\cos\theta_2}{\eta_1\cos\theta_1+\eta_2\cos\theta_2}\\
 $$
 
 #### Glossy Surfaces

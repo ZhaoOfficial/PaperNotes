@@ -15,15 +15,46 @@ But there are problems for which Monte Carlo methods are the only feasible solut
 
 ## 3.4 Monte Carlo Integration
 
+Estimate
+$$
+I=\int_a^bf(x)\mathrm{d}x
+$$
+
 ### 3.4.1 Weighted Sum of Random Variables
+
+$$
+G=\sum_{i=1}^Nw_ig_i
+$$
+
+$g_i$ are i.i.d random variables and $\sum_{i=1}^Nw_i=1$. Let $w_i=1/N$, then the expecation of $G$ is:
+$$
+E[G(x)]=\frac{1}{N}\sum_{i=1}^NE[g_i(x)]=\frac{1}{N}\sum_{i=1}^NE[g(x)]=E[g(x)]
+$$
+and the variance of $G$ is:
+$$
+\begin{align*}
+\mathrm{Var}[G(x)]&=\mathrm{Var}\left[\frac{1}{N}\sum_{i=1}^Ng_i(x)\right]\\
+&=\sum_{i=1}^N\mathrm{Var}\left[\frac{1}{N}g_i(x)\right]\quad(\text{i.i.d})\\
+&=\frac{1}{N^2}\sum_{i=1}^N\mathrm{Var}\left[g_i(x)\right]\\
+&=\frac{1}{N}\mathrm{Var}\left[g_i(x)\right]
+\end{align*}
+$$
+因此，随着 $N$ 的增加，$G$ 的方差随着 $N$ 而减小，使得 $G$ 越来越好地估计 $E[g(x)]$。标准差 $\sigma$ 减小速度是 $\sqrt{N}$。
+Thus, as $N$ increases, the variance of $G$ decreases with $N$, making $G$ an increasingly good estimator of $E[g(x)]$. The standard deviation $\sigma$ decreases as $\sqrt{N}$.
 
 ### 3.4.2 Estimator
 
-这个估计的方差（样本均值的方差）应该是：**?**
+Estimator:
+$$
+\langle{I}\rangle=\frac{1}{N}\sum_{i=1}^{N}\frac{f(x_i)}{p(x_i)}
+$$
+这个估计器的方差（样本均值的方差）应该是：
 $$
 \begin{align*}
-\text{Var}_{p}[I]&=\text{Var}_{p}\left[\frac{1}{N}\sum_{i=1}^{N}\frac{f(x_i)}{p(x_i)}\right]\\
-&=\frac{1}{N}\int\left(\frac{f(x)}{p(x)}-I\right)^2p(x)dx
+\mathrm{Var}_{p}[I]&=\mathrm{Var}_{p}\left[\frac{1}{N}\sum_{i=1}^{N}\frac{f(x_i)}{p(x_i)}\right]\\
+&=\frac{1}{N^2}\sum_{i=1}^{N}\mathrm{Var}_{p}\left[\frac{f(x_i)}{p(x_i)}\right]\\
+&=\frac{1}{N}\left[\int_a^b\left(\frac{f(x)}{p(x)}\right)^2p(x)\mathrm{d}x-\left(\int_a^bf(x)\mathrm{d}x\right)^2\right]\\
+&=\frac{1}{N}\int_a^b\left(\frac{f(x)}{p(x)}-I\right)^2p(x)\mathrm{d}x
 \end{align*}
 $$
 
