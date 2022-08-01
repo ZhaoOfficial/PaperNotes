@@ -22,7 +22,7 @@ However, such data structures rely on heuristics and structural modifications (s
 我们通过我们的*多分辨率哈希编码*来解决这些问题，这种编码具有**自适应性**和**高效性**，**独立于任务**。它仅由两个值配置 -- 参数数量 $T$ 和所需的最佳分辨率 $N_{\mathrm{max}}$ -- 只需要几秒钟的训练就可以在各种任务上产生最先进的质量。
 We address these concerns with our *multiresolution hash encoding*, which is **adaptive** and **efficient**, **independent of the task**. It is configured by just two values -- the number of parameters $T$ and the desired finest resolution $N_{\mathrm{max}}$ -- yielding state-of-the-art quality on a variety of tasks after a few seconds of training.
 
-**Adaptivity**
+**Task-independent Adaptivity**
 
 我们将级联的网格映射到相应的固定大小的特征向量数组。在低分辨率下，网格点和数组元素之间存在 1:1 映射。在高分辨率下，该数组被视为一个哈希表并使用空间哈希函数进行索引，其中多个网格点对应一个数组元素。
 We map a cascade of grids to corresponding fixed-size arrays of feature vectors. At coarse resolutions, there is a 1:1 mapping from grid points to array entries. At fine resolutions, the array is treated as a hash table and indexed using a spatial hash function, where multiple grid points alias each array entry.
@@ -64,15 +64,36 @@ A continuous variant of the one-hot encoding based on rasterizing a kernel, the 
 
 ### Parametric encoding
 
+这个想法是在辅助数据结构（例如网格或树）中安排额外的没有权重和偏差的可训练参数，并根据输入向量查找和插值（可选）这些参数 $\mathbf{x} \in\mathbb{R}^d$。
+The idea is to arrange additional trainable parameters (beyond weights and biases) in an auxiliary data structure, such as a grid or a tree and to look-up and (optionally) interpolate these parameters depending on the input vector $\mathbf{x}\in\mathbb{R}^d$.
+
+这种安排以更大的内存占用换取更小的计算成本：而对于通过网络向后传播的每个梯度，必须更新完全连接的 MLP 网络中的每个权重；对于可训练的输入编码参数（“特征向量”），只有极少数受到影响。例如，对于特征向量的三线性插值 3D 网格，对于每个反向传播到编码的样本，只需要更新 8 个这样的网格点。这样，尽管参数编码的参数总数远高于固定输入编码，但训练期间更新所需的 FLOP 和内存访问的数量并没有显着增加。
+This arrangement trades a larger memory footprint for a smaller computational cost: whereas for each gradient propagated backwards through the network, every weight in the fully connected MLP network must be updated, for the trainable input encoding parameters ("feature vectors"), only a very small number are affected. For example, with a trilinearly interpolated 3D grid of feature vectors, only 8 such grid points need to be updated for each sample back-propagated to the encoding. In this way, although the total number of parameters is much higher for a parametric encoding than a fixed input encoding, the number of FLOPs and memory accesses required for the update during training is not increased significantly.
+
 ### Sparse parametric encoding
+
+完全没有任何输入编码（a），网络只能学习相当平滑的位置函数，导致光场的逼近很差。
+Without any input encoding at all (a), the network is only able to learn a fairly smooth function of position, resulting in a poor approximation of the light field.
+
+频率编码 (b) 允许相同大小的网络（8 个隐藏层，每个 256 宽）更准确地表示场景。
+The frequency encoding (b) allows the same moderately sized network (8 hidden layers, each 256 wide) to represent the scene much more accurately.
+
+中间图像 (c) 将较小的网络与 $128^3$ 三线性插值的 16 维特征向量的密集网格配对，总共有 3355 万个可训练参数。
+The middle image (c) pairs a smaller network with a dense grid of $128^3$ trilinearly interpolated, 16-dimensional feature vectors, for a total of 33.6 million trainable parameters.
+
+然而，密集的网格在两个方面是浪费的。首先，它分配给空白区域的特征与分配给表面附近的区域一样多。参数的数量增长为 $O(N^3)$，而感兴趣的可见表面的表面积仅增长为 $O(N^2)$。在此示例中，网格的分辨率为 $128^3$，但只有 53807 (2.57%) 个单元格接触可见表面。
+However, the dense grid is wasteful in two ways. First, it allocates as many features to areas of empty space as it does to those areas near the surface. The number of parameters grows as $O(N^3)$, while the visible surface of interest has surface area that grows only as $O(N^2)$. In this example, the grid has resolution $128^3$, but only 53807 (2.57%) of its cells touch the visible surface.
+
+使用一种编码，其中插值特征存储在八个同位网格中，分辨率从 $16^3$ 到 $173^3$，每个网格包含二维特征向量。这些被连接起来形成网络的 16 维（与 (c) 相同）输入。尽管参数数量少于 (c) 的一半，但重建质量是相似的。
+Using an encoding in which interpolated features are stored in eight co-located grids with resolutions from $16^3$ to $173^3$ each containing 2-dimensional feature vectors. These are concatenated to form a 16-dimensional (same as (c)) input to the network. Despite having less than half the number of parameters as (c), the reconstruction quality is similar.
 
 ## 3 Multiresolution Hash Encoding
 
-给定一个全连接的神经网络 $m(\mathbf y;\Phi)$，我们对其输入的编码 $\mathbf y = \mathrm{enc}(x;\theta)$ 感兴趣，该编码可以广泛应用于提高近似质量和训练速度，而不产生明显的性能开销。
+给定一个全连接的神经网络 $m(\mathbf y;\Phi)$，我们对其输入的编码 $\mathbf y = \mathrm{enc}(x;\theta)$ 感兴趣，该编码可以广泛应用于*提高近似质量和训练速度，而不产生明显的性能开销。*
 Given a fully connected neural network $m(\mathbf y;\Phi)$, we are interested in an encoding of its inputs $y = \mathrm{enc}(x;\theta)$ that *improves the approximation quality and training speed across a wide range of applications without incurring a notable performance overhead.*
 
 我们的神经网络不仅有可训练的权重参数 $\Phi$，还有可训练的编码参数 $\theta$。这些参数被排列成 $L$ 个层次，每个层次最多包含 $T$ 个维度的特征向量 $F$。
-Our neural network not only has trainable weight parameters $\Phi$, but also trainable encoding parameters $\theta$.These are arranged into $L$ levels, each containing up to $T$ feature vectors with dimensionality $F$.
+Our neural network not only has trainable weight parameters $\Phi$, but also trainable encoding parameters $\theta$. These are arranged into $L$ levels, each containing up to $T$ feature vectors with dimensionality $F$.
 
 | Parameter                               | Symbol     | Value             |
 | --------------------------------------- | ---------- | ----------------- |
@@ -82,14 +103,14 @@ Our neural network not only has trainable weight parameters $\Phi$, but also tra
 | Coarsest resolution                     | $N_{\min}$ | $16$              |
 | Finest resolution                       | $N_{\max}$ | $[2^9,2^{19}]$    |
 
-每个层次都是独立的，并且概念上是在**网格的顶点存储特征向量**，其分辨率 $N_l$ 选择为最粗和最细分辨率之间的几何级数 $[N_{\min}, N_{\max}]$：
+每个层次都是独立的，并且概念上是在**网格的顶点存储特征向量**，其分辨率 $N_l$ 选择为最粗和最细分辨率  $[N_{\min}, N_{\max}]$ 之间的几何级数：
 Each level is independent and conceptually **stores feature vectors at the vertices of a grid**, the resolution of which is chosen to be a geometric progression between the coarsest and finest resolutions $[N_{\min}, N_{\max}]$:
 $$
 N_l\gets\lfloor N_\min\cdot b^l\rfloor\\
-b\gets\exp(\frac{\ln N_{\max}-\ln N_{\min}}{L-1})
+b\gets\exp\left(\frac{\ln N_{\max}-\ln N_{\min}}{L-1}\right)
 $$
-$N_{\max}$ 的选择是为了匹配训练数据中最细微的细节。由于大量的层次 $L$，增长因子通常很小。我们的例子里 $b\in[1.38, 2]$。
-$N_{\max}$ is chosen to match the finest detail in the training data. Due to the large number of levels $L$, the growth factor is usually small. Our use cases have $b \in [1.38, 2]$.
+$N_{\max}$ 的选择是为了匹配训练数据中最细微的细节。由于大量的层次 $L$，增长因子通常很小。我们的例子里 $b\in[1.26, 2]$。
+$N_{\max}$ is chosen to match the finest detail in the training data. Due to the large number of levels $L$, the growth factor is usually small. Our use cases have $b \in [1.26, 2]$.
 
 [   9,   10,   11,   12,   13,   14,   15,   16,   17,   18,   19]
 [1.26, 1.32, 1.38, 1.45, 1.52, 1.59, 1.66, 1.74, 1.82, 1.91, 2.00]
@@ -97,21 +118,23 @@ $N_{\max}$ is chosen to match the finest detail in the training data. Due to the
 考虑一个单层 $l$。输入的坐标 $\mathbf x\in\mathbb R^d$ 在向下和向上取整之前，被该层的网格分辨率 $N_l$ 所缩放 $\lfloor\mathbf x_l\rfloor\gets\lfloor\mathbf x\cdot N_{l}\rfloor,\lceil\mathbf x_l\rceil\gets\lceil\mathbf x\cdot N_l\rceil$。
 Consider a single level $l$. The input coordinate $\mathbf x\in\mathbb R^d$ is scaled by that level's grid resolution $N_l$ before rounding down and up $\lfloor\mathbf x_l\rfloor\gets\lfloor\mathbf x\cdot N_{l}\rfloor,\lceil\mathbf x_l\rceil\gets\lceil\mathbf x\cdot N_l\rceil$.
 
-对于粗略层次，密集网格少于 $T$ 个参数的，即 $(N_l)^d\le T$，这种映射是 $1:1$ 的。在更精细的层次上，我们使用一个哈希函数 $h:\mathbb Z^d\mapsto\mathbb Z^T$ 来索引到数组中，有效地把它当作一个哈希表，尽管没有明确的碰撞处理。
-For coarse levels where a dense grid requires fewer than $T$ parameters, i.e. $(N_l)^d\le T$, this mapping is $1:1$. At finer levels, we use a hash function $h:\mathbb Z^d\mapsto\mathbb Z^T$ to index into the array, effectively treating it as a hash table, although there is no explicit collision handling.
+对于粗略层次，密集网格少于 $T$ 个参数的，即 $(N_l+1)^d\le T$，这种映射是 $1:1$ 的。在更精细的层次上，我们使用一个哈希函数 $h:\mathbb Z^d\mapsto\mathbb Z_T$ 来索引到数组中，有效地把它当作一个哈希表，尽管没有明确的碰撞处理。
+For coarse levels where a dense grid requires fewer than $T$ parameters, i.e. $(N_l+1)^d\le T$, this mapping is $1:1$. At finer levels, we use a hash function $h:\mathbb Z^d\mapsto\mathbb Z_T$ to index into the array, effectively treating it as a hash table, although there is no explicit collision handling.
 
-相反，我们依靠基于梯度的优化来在阵列中存储适当的稀疏细节，以及随后的神经网络 $m(\mathbf y;\Phi)$ 进行碰撞解决。因此，可训练的编码参数 $\Theta$ 的数量是 $O(T)$，并以 $T\cdot L\cdot F$ 为界，在我们的例子中，总是 $T\cdot 32$。
-We rely instead on the gradient-based optimization to store appropriate sparse detail in the array, and the subsequent neural network $m(y;\Phi)$ for collision resolution. The number of trainable encoding parameters $\theta$ is therefore $O(T)$ and bounded by $T\cdot L\cdot F$ which in our case is always $T\cdot32$.
+相反，我们依靠基于梯度的优化来在阵列中存储适当的稀疏细节，以及随后的神经网络 $m(\mathbf y;\Phi)$ 进行碰撞解决。因此，可训练的编码参数 $\Theta$ 的数量是 $O(T)$，并以 $T\cdot L\cdot F$ 为上界。
+We rely instead on the gradient-based optimization to store appropriate sparse detail in the array, and the subsequent neural network $m(y;\Phi)$ for collision resolution. The number of trainable encoding parameters $\theta$ is therefore $O(T)$ and bounded by $T\cdot L\cdot F$.
 
-我们使用一下形式的空间哈希函数，其中 $\oplus$ 表示各位异或操作，$\pi_i$ 是独特的大素数。实际上，这个公式将每个维度的线性同余（伪随机）排列的结果进行异或，去相关维度对散列值的影响。
-We use a spatial hash function of the form below where $\oplus$ denotes the bit-wise XOR operation and $\pi_i$ are unique, large prime numbers. Effectively, this formula XORs the results of a per-dimension linear congruential (pseudo-random) permutation, decorrelating the effect of the dimensions on the hashed value.
+我们使用以下形式的空间哈希函数，其中 $\oplus$ 表示各位异或操作，$\pi_i$ 是独特的大素数。实际上，这个公式将每个维度的线性同余（伪随机）排列的结果进行异或，去相关了维度对散列值的影响。
+
+##### We use a spatial hash function of the form below where $\oplus$ denotes the bit-wise XOR operation and $\pi_i$ are unique, large prime numbers. Effectively, this formula XORs the results of a per-dimension linear congruential (pseudo-random) permutation, decorrelating the effect of the dimensions on the hashed value.
+
 $$
 h(\mathbf x)=\left(\bigoplus_{i=1}^{d}x_i\pi_i\right)
 $$
-值得注意的是，为了实现（伪）独立性，只有 $d-1$ 个维度必须被置换，因此我们选择 $\pi_1\gets 1$ 以获得更好的缓存一致性。$\pi_2=19349663,\pi_3=83492791$
-Notably, to achieve (pseudo-)independence, only $d − 1$ of the $d$ dimensions must be permuted, so we choose $\pi_1 \gets 1$ for better cache coherence. $\pi_2=19349663,\pi_3=83492791$
+值得注意的是，为了实现（伪）独立性，只有 $d-1$ 个维度必须被置换，因此我们选择 $\pi_1\gets 1$ 以获得更好的缓存一致性。$\pi_2=2654435761,\pi_3=805459861$.
+Notably, to achieve (pseudo-)independence, only $d − 1$ of the $d$ dimensions must be permuted, so we choose $\pi_1 \gets 1$ for better cache coherence. $\pi_2=2654435761,\pi_3=805459861$。
 
-最后，每个角的特征向量根据其在超立方体内的相对位置进行 $d$ 线性插值，即插值权重为 $\mathbf w_l\gets\mathbf x_l-\lfloor\mathbf x_l\rfloor$。
+最后，每个角的特征向量根据其在超立方体内的相对位置进行 $d$-线性插值，插值权重为 $\mathbf w_l\gets\mathbf x_l-\lfloor\mathbf x_l\rfloor$。
 Lastly, the feature vectors at each corner are $d$-linearly interpolated according to the relative position of within its hypercube, i.e. the interpolation weight is $\mathbf w_l\gets\mathbf x_l-\lfloor\mathbf x_l\rfloor$.
 
 回想一下，这个过程对于每个 $L$ 层级都是独立进行的。每一层的插值特征向量，以及辅助输入 $\xi\in\mathbb R^E$（例如神经辐射缓存中的编码视图方向和纹理），连接起来产生 $\mathbf y\in\mathbb R^{LF+E}$，它是 MLP $m(\mathbf y;\Phi)$ 的编码输入 $\mathrm{enc}(\mathbf x;\theta)$。
@@ -122,8 +145,8 @@ Recall that this process takes place independently for each of the $L$ levels. T
 选择散列表大小 $T$ 提供了性能、内存和质量之间的折衷。较高的 $T$ 值会导致较高的质量和较低的性能。内存占用随 $T$ 线性增长，而质量和性能往往呈次线性增长。
 Choosing the hash table size $T$ provides a trade-off between performance, memory and quality. Higher values of $T$ result in higher quality and lower performance. The memory footprint is linear in $T$, whereas quality and performance tend to scale sub-linearly.
 
-超参数 L 和 F 还权衡了质量和性能。
-The hyperparameters L and F also trade off quality and performance.
+超参数 $L$ 和 $F$ 还权衡了质量和性能。
+The hyperparameters $L$ and $F$ also trade off quality and performance.
 
 ### Implicit hash collision resolution
 
@@ -168,7 +191,7 @@ In order to optimize inference and backpropagation performance, we store hash ta
 为了优化使用 GPU 的缓存，我们逐级评估哈希表：在处理一批输入位置时，我们安排计算查找所有输入的多分辨率哈希编码的第一级，然后是输入的第二级，等等。因此，在任何给定时间，只有少量连续的哈希表必须驻留在缓存中，具体取决于 GPU 上可用的并行度。
 To optimally use the GPU’s caches, we evaluate the hash tableslevel by level: when processing a batch of input positions, we schedule the computation to look up the first level of the multiresolution hash encoding for all inputs, followed by the second level for inputs, and so on. Thus, only a small number of consecutive hash tables have to reside in caches at any given time, depending on how much parallelism is available on the GPU. Thus, only a small number of consecutive hash tables have to reside in caches at any given time, depending on how much parallelism is available on the GPU.
 
-在我们的硬件上，只要哈希表大小保持在 $T\le2^{19}$ 以下，编码的性能就会大致保持不变。 超过此阈值，性能开始显着下降。
+在我们的硬件上，只要哈希表大小保持在 $T\le2^{19}$ 以下，编码的性能就会大致保持不变。超过此阈值，性能开始显着下降。
 On our hardware, the performance of the encoding remains roughly constant as long as the hash table size stays below $T\le2^{19}$. Beyond this threshold, performance starts to drop significantly.
 
 每次查找的最佳特征维度 $F$ 数量取决于 GPU 架构。一方面，在前面提到的流方法中，一小部分有利于缓存局部性，但另一方面，较大的 $F$ 通过允许 $F$ 宽的向量加载指令来支持内存一致性。
@@ -219,7 +242,7 @@ It is frequently useful to input auxiliary dimensions $\xi\in\mathbb R^E$ to the
 | 38.59 dB | 41.9 dB |
 | 36.9 h   | 4 min   |
 
-很难直接将我们的编码性能与 ACORN 进行比较； $10$ 倍的一个因素源于我们使用由 tiny-cuda-nn 框架提供的完全融合的 CUDA 内核。输入编码允许使用比 ACORN 小得多的 MLP，这在剩余的 $10\sim100$ 倍加速中占了很大一部分。
+很难直接将我们的编码性能与 ACORN 进行比较；$10$ 倍的一个因素源于我们使用由 tiny-cuda-nn 框架提供的完全融合的 CUDA 内核。输入编码允许使用比 ACORN 小得多的 MLP，这在剩余的 $10\sim100$ 倍加速中占了很大一部分。
 It is difficult to directly compare the performance of our encoding to ACORN; a factor of $\sim10$ stems from our use of fully fused CUDA kernels, provided by the tiny-cuda-nn framework. The input encoding allows for the use of a much smaller MLP than with ACORN, which accounts for much of the remaining $10\times\sim100\times$ speedup.
 
 ### 5.2 Signed Distance Functions
@@ -230,7 +253,7 @@ It is difficult to directly compare the performance of our encoding to ACORN; a 
 By using a data structure tailored to the reference shape, NGLOD achieves the highest visual reconstruction quality. However, even without such a dedicated data structure, our encoding approaches a similar fidelity to NGLOD in terms of the g-IoU metric, with similar performance and memory cost.
 
 我们的哈希编码在“联合交集”（IoU）方面表现出相似的数字质量，并且可以在场景边界框中的任何位置进行评估。然而，它也表现出视觉上不受欢迎的粗糙表面，我们将其归因于随机分布的哈希冲突。
-Our hash encoding exhibits similar numeric quality in terms of “intersection over union” (IoU) and can be evaluated anywhere in the scene’s bounding box. However, it also exhibits visually undesirable surface roughness that we attribute to randomly distributed hash collisions.
+Our hash encoding exhibits similar numeric quality in terms of "intersection over union" (IoU) and can be evaluated anywhere in the scene’s bounding box. However, it also exhibits visually undesirable surface roughness that we attribute to randomly distributed hash collisions.
 
 | Shape     | NGLOD  | Frequency | NGP    |
 | --------- | ------ | --------- | ------ |

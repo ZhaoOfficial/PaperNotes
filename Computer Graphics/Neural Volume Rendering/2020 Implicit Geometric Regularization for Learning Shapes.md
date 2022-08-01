@@ -68,7 +68,7 @@ $$
 \nabla_{\mathbf{x}}\mathbf{y}^{l+1}=\mathrm{diag}(\sigma'(\mathbf{W}\mathbf{y}^l+\mathbf{b}))\mathbf{W}\cdot\nabla_{\mathbf{x}}\mathbf{y}^l
 $$
 
-其中 $\mathrm{diag}(\mathbf{z})$ 将其输入向量 $\mathbf{z}\in\mathbb{R}^k$ 排列在方阵 $\mathbb{R}^{k\times k}$  的对角线上，$\sigma'$ 是 $\sigma$ 的导数。
+其中 $\mathrm{diag}(\mathbf{z})$ 将其输入向量 $\mathbf{z}\in\mathbb{R}^k$ 排列在方阵 $\mathbb{R}^{k\times k}$ 的对角线上，$\sigma'$ 是 $\sigma$ 的导数。
 where $\mathrm{diag}(\mathbf{z})$ is arranging its input vector $\mathbf{z}\in\mathbb{R}^k$ on the diagonal of a square matrix $\mathbb{R}^{k\times k}$ and $\sigma'$ is the derivative of $\sigma$.
 
 ![[../../Note Image/IGR network.png]]

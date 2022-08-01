@@ -50,7 +50,7 @@ Fast training (Plenoxel).
 
 ### 1 Motivation
 
-Accelerating training a neural representing scene.
+Acceleration of training a neural representing scene.
 
 ### 2 Methods
 
@@ -85,13 +85,78 @@ The core elements that are necessary for solving 3D inverse problems: **a differ
 
 Find a more uniform regularizer (TV regularizer) for each scene.
 
+2022 Instant Neural Graphics Primitives with a Multiresolution Hash Encoding
+
+2022 TensoRF: Tensorial Radiance Fields
+
 ## 2022 Instant Neural Graphics Primitives with a Multiresolution Hash Encoding
+
+### 1 Motivation
+
+Acceleration of any coordinate-based neural representing scene.
+
+### 2 Methods
+
+The author split the mapping into two parts. The encoding stage $\mathbf y = \mathrm{enc}(x;\theta)$ and the approximating/fitting stage $m(\mathbf y;\Phi)$ where $\theta$ and $\Phi$ are the corresponding parameters. In this paper they proposed the multi-resolution hash encoding to improves the approximation quality and training speed across a wide range of applications without incurring a notable performance overhead.
+
+The trainable encoding parameters $\theta$ are arranged into $L$ levels, each containing up to $T$ feature vectors with dimensionality $F$. The number of trainable encoding parameters $\theta$ is therefore $O(T)$ and bounded by $T\cdot L\cdot F$.
+
+Each level is independent and stores feature vectors at the vertices of a grid, the resolution of which is chosen to be a geometric progression between the coarsest and finest resolutions $[N_{\min}, N_{\max}]$:
+$$
+N_l\gets\lfloor N_\min\cdot b^l\rfloor\\
+b\gets\exp\left(\frac{\ln N_{\max}-\ln N_{\min}}{L-1}\right)
+$$
+Consider a single level $l$. The input coordinate $\mathbf x\in\mathbb R^d$ is scaled by that level's grid resolution $N_l$ before rounding down and up $\lfloor\mathbf x_l\rfloor\gets\lfloor\mathbf x\cdot N_{l}\rfloor,\lceil\mathbf x_l\rceil\gets\lceil\mathbf x\cdot N_l\rceil$.
+
+For coarse levels where a dense grid requires fewer than $T$ parameters, i.e. $(N_l+1)^d\le T$, this mapping is $1:1$. At finer levels, we use a hash function $h:\mathbb Z^d\mapsto\mathbb Z_T$ to index into the array, effectively treating it as a hash table, although there is no explicit collision handling.
+$$
+y = 
+$$
+
+
+### 3 Related work
+
+2021 Plenoxels: Radiance Fields without Neural Networks
+
+### 4 Results
+
+### 5 Discussion
+
+Impressive and brilliant work! I was fully astonished at the first glance of this paper and its result.
+
+### 6 Future work
 
 
 
 ## 2022 TensoRF: Tensorial Radiance Fields
 
+### 1 Motivation
 
+Training a NeRF, a pure MLP scene representation, is time-consuming. Training a Plenoxel, a pure grid representation, is memory-consuming. TensoRF pursues an approach that is both efficient in training time and compact in memory footprint, and at the same time achieves state-of-the-art rendering quality.
+
+### 2 Methods
+
+Factorize the tensor of radiance fields into multiple low rank tensor components.
+
+#### CP Decomposition
+
+
+
+### 3 Related work
+
+...
+
+### 4 Results
+
+...
+
+### 5 Discussion
+
+...
+
+### 6 Future work
+
+...
 
 ## 2022 PREF: Phasorial Embedding Fields for Compact Neural Representations
 

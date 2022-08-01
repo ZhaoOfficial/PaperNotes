@@ -18,6 +18,8 @@ Personal notes of read papers and books.
 
 2021 Ref-NeRF Structured View-Dependent Appearance for Neural Radiance Fields
 
+2022 Instant Neural Graphics Primitives with a Multiresolution Hash Encoding
+
 2022 TensoRF: Tensorial Radiance Fields
 
 ### Other

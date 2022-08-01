@@ -47,7 +47,7 @@ Monte-Carlo (MC) 方法是基于平均样本回报的传统强化学习算法。
 Monte-Carlo (MC) methods are traditional reinforcement learning algorithms based on averaging sample returns.
 
 MC 方法是为回合任务设计的，其中经历可以分为回合，所有回合最终都会终止。为了优化策略，每次访问 MC 可用于通过迭代执行以下过程来估计 Q 表 $Q(s;a)$：
-MC methods are designed for episodic tasks, where experiences can be divided into episodes and all the episodes eventually terminate. To optimize a policy, every-visit MC can be used to estimate Q-table $Q(s; a)$ by iteratively executing the following procedure:
+MC methods are designed for episodic tasks, where experiences can be divided into episodes and all the episodes eventually terminate. To optimize a policy, every-visit MC can be used to estimate Q-table $Q(s; a)$ by iteratively executing the following procedure:
 
 1. 使用 $\pi$ 生成回合。
     Generating an episode using $\pi$.

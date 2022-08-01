@@ -2,7 +2,7 @@
 
 ## 0 Abstract
 
-与纯粹使用 MLP 的 NeRF 不同，我们将场景的辐射场建模为 4D 张量。 3D 体素网格的每个体素都具有多通道的特征。
+与纯粹使用 MLP 的 NeRF 不同，我们将场景的辐射场建模为 4D 张量。3D 体素网格的每个体素都具有多通道的特征。
 Unlike NeRF that purely uses MLPs, we model the radiance field of a scene as a 4D tensor, which represents a 3D voxel grid with per-voxel multi-channel features.
 
 我们的中心思想是**将 4D 场景张量分解为多个紧凑的低秩张量分量**。
