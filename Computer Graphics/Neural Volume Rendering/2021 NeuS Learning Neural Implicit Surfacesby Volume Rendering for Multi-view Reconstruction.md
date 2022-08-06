@@ -13,7 +13,7 @@ We observe that the conventional volume rendering method causes inherent geometr
 
 ## 1 Introduction
 
-例如，IDR 产生了令人印象深刻的重建结果，但它无法重建具有导致突然深度变化的复杂结构的对象。造成这种限制的原因是 IDR 中使用的表面渲染方法只考虑了每条光线的单个表面交点。 因此，梯度只存在于这个单一的点，这对于有效的反向传播来说太局部了，并且当图像的深度突然变化时，优化会陷入糟糕的局部最小值。
+例如，IDR 产生了令人印象深刻的重建结果，但它无法重建具有导致突然深度变化的复杂结构的对象。造成这种限制的原因是 IDR 中使用的表面渲染方法只考虑了每条光线的单个表面交点。因此，梯度只存在于这个单一的点，这对于有效的反向传播来说太局部了，并且当图像的深度突然变化时，优化会陷入糟糕的局部最小值。
 For example, IDR produces impressive reconstruction results, but it fails to reconstruct objects with complex structures that causes abrupt depth changes. The cause of this limitation is that the surface rendering method used in IDR only considers a single surface intersection point for each ray. Consequently, the gradient only exists at this single point, which is too local for effective back propagation and would get optimization stuck in a poor local minimum when there are abrupt changes of depth on images.
 
 由于孔洞引起的深度变化，神经网络会错误地将前表面附近的点预测为蓝色，而无法找到远处的表面。
@@ -58,10 +58,8 @@ Some methods enforce 3D understanding in a deep learning framework by introducin
 
 *S-density or logistic density distribution*: $\phi_{s}(f(\mathbf{x})),\mathbf{x}\in\mathbb{R}^3$.
 $$
-\begin{gather*}
 \Phi_{s}(x)=\frac{1}{1+e^{-sx}}\\
-\phi_{s}(x)=\frac{\mathrm{d}}{\mathrm{d}x}\Phi_{s}(x)=\frac{se^{-sx}}{(1+e^{-sx})^2}\\
-\end{gather*}
+\phi_{s}(x)=\frac{\mathrm{d}}{\mathrm{d}x}\Phi_{s}(x)=\frac{se^{-sx}}{(1+e^{-sx})^2}
 $$
 
 原则上 $\phi_{s}(x)$ 可以是任何以 0 为中心的单峰（即钟形）密度分布；在这里，我们选择逻辑密度分布是为了计算方便。
@@ -69,7 +67,6 @@ In principle $\phi_{s}(x)$ can be any unimodal (i.e. bell-shaped) density distri
 
 注意 $\phi_{s}(x)$ 的标准差由 $1/s$ 给出，这也是一个可训练的参数，即随着网络训练收敛，$1/s$ 接近于零。
 Note that the standard deviation of $\phi_{s}(x)$ is given by $1/s$, which is also a trainable parameter, that is, $1/s$ approaches to zero as the network training converges.
-
 $$
 \begin{align*}
 \mathbb{E}_{x}(\phi_{s}(x))&=\int_{-\infty}^{+\infty}x\phi_{s}(x)\mathrm{d}x=\int_{-\infty}^{+\infty}\frac{sxe^{-sx}}{(1+e^{-sx})^2}\mathrm{d}x\\
@@ -79,10 +76,10 @@ $$
 
 $$
 \begin{align*}
-\mathbb{Var}_{x}(\phi_{s}(x))&=\int_{-\infty}^{+\infty}x^2\phi_{s}(x)\mathrm{d}x=\int_{-\infty}^{+\infty}\frac{sx^2e^{-sx}}{(1+e^{-sx})^2}\mathrm{d}x\\
+\mathbb{Var}_{x}(\phi_{s}(x))&=\int_{-\infty}^{+\infty}x^2\phi_{s}(x)\mathrm{d}x\\
 &=\int_{-\infty}^{+\infty}\frac{sx^2e^{-sx}}{(1+e^{-sx})^2}\mathrm{d}x\\
-&=\frac{1}{s^2}\int_{-\infty}^{+\infty}\frac{u^2e^{-u}}{(1+e^{-u})^2}\mathrm{d}u\quad(u=sx)\\
-&=\frac{\pi^2}{3s^2}\quad(\text{With the help of Wolfram})
+&=\frac{1}{s^2}\int_{-\infty}^{+\infty}\frac{u^2e^{-u}}{(1+e^{-u})^2}\mathrm{d}u&(u=sx)\\
+&=\frac{\pi^2}{3s^2}&(\text{With the help of Wolfram})
 \end{align*}
 $$
 
@@ -122,6 +119,8 @@ Then $\sigma(t)$ is set to be S-density and weight is the above equation.
 权函数 $w(t)$ 在光线到达表面点 $\mathbf{p}(t^*)$ 之前的某一点达到局部最大值，而 $f(\mathbf{p}(t^*)) = 0$。
 The weight function $w(t)$ attains a local maximum at a point before the ray reaches the surface point $\mathbf{p}(t^*)$, satisfying $f(\mathbf{p}(t^*))=0$.
 
+（此部分在 Supplementary B.2，但是请先看完这个部分。）
+
 #### Our solution
 
 使用归一化的 S 密度作为权重。
@@ -134,35 +133,58 @@ $$
 这种权重函数的构造是无偏的，但不是遮挡感知的。
 This construction of weight function is unbiased, but not occlusion-aware.
 
+（此部分在 Supplementary B.1，但是请先看完这个部分。）
+
 我们首先定义一个不透明的密度函数 $\rho(t)$，它是标准体绘制中体密度的对应物。
-We first define an opaque density function $\rho(t)$, which is the counterpart of the volume density in standard volume rendering.
+We first define an opaque density function $\rho(t)$​, which is the counterpart of the volume density in standard volume rendering.
+$$
+w(t)=T(t)\rho(t)\quad T(t)=\exp\left(-\int_0^t\rho(s)\mathrm{d}s\right)
+$$
 
 #### How we derive opaque density $\rho$
 
-具体来说，在单平面相交的简单情况下，很容易看出有符号距离函数 $f(\mathbf{p}(t))$ 为$-|\cos(\theta)|\cdot(t-t^*)$，其中 $f(\mathbf{p}(t^*))=0$，$\theta$ 是观察方向 $\mathbf{v}$ 与外表面法线向量的夹角 $\mathbf{n}$。因为假设是局部表面，因此 $\theta$ 是一个常数。
-Specifically, in the simple case of a single plane intersection, it is easy to see that the signed distance function $f(\mathbf{p}(t))$ is $-|\cos(\theta)|\cdot(t-t^*)$, where $f(\mathbf{p}(t^*))=0$, and $\theta$ is the angle between the view direction $\mathbf{v}$ and the outward surface normal vector $\mathbf{n}$. Because the surface is assumed locally, $\theta$ is a constant.
+具体来说，在单平面相交的简单情况下，很容易看出有符号距离函数 $f(\mathbf{p}(t))=-|\cos(\theta)|\cdot(t-t^*)$，其中 $f(\mathbf{p}(t^*))=0$，$\theta$ 是观察方向 $\mathbf{v}$ 与外表面法线向量的夹角 $\mathbf{n}$。因为假设是局部表面，因此 $\theta$ 是一个常数。
+Specifically, in the simple case of a single plane intersection, it is easy to see that the signed distance function $f(\mathbf{p}(t))=-|\cos(\theta)|\cdot(t-t^*)$, where $f(\mathbf{p}(t^*))=0$, and $\theta$ is the angle between the view direction $\mathbf{v}$ and the outward surface normal vector $\mathbf{n}$. Because the surface is assumed locally, $\theta$ is a constant.
 
-Let $w(t)$ be:
+Under this setting, let $w(t)$ be:
 $$
 \begin{align*}
-w(t)&=\frac{\phi_{s}(f(\mathbf{p}(t)))}{\int_{0}^{\infty}\phi_{s}(f(\mathbf{p}(u)))\mathrm{d}u}\\
-&=\frac{\phi_{s}(f(\mathbf{p}(t)))}{\int_{0}^{\infty}\phi_{s}(-|\cos(\theta)|\cdot(u-t^*))\mathrm{d}u}\\
-&=\frac{\phi_{s}(f(\mathbf{p}(t)))}{-|\cos\theta|^{-1}\cdot\int_{0}^{\infty}\phi_{s}(u-t^*)\mathrm{d}u}\\
-&=T(t)\sigma(t)
+w(t)&=\frac{\phi_{s}(f(\mathbf{p}(t)))}{\int_{-\infty}^{\infty}\phi_{s}(f(\mathbf{p}(u)))\mathrm{d}u}\\
+&=\frac{\phi_{s}(f(\mathbf{p}(t)))}{\int_{-\infty}^{\infty}\phi_{s}(-|\cos(\theta)|\cdot(u-t^*))\mathrm{d}u}\\
+&=|\cos\theta|\phi_{s}(f(\mathbf{p}(t)))
 \end{align*}
 $$
 
+Since:
+$$
+\begin{align*}
+&\int_{-\infty}^{\infty}\phi_{s}(-|\cos(\theta)|\cdot(u-t^*))\mathrm{d}u\\
+&=-|\cos\theta|^{-1}\int_{-\infty}^{\infty}\phi_{-|\cos(\theta)|s}(u-t^*)\mathrm{d}u\\
+&=-|\cos\theta|^{-1}\int_{-\infty}^{\infty}\phi_{-|\cos(\theta)|s}(u)\mathrm{d}u\\
+&=-|\cos\theta|^{-1}\int_{-\infty}^{\infty}\phi_{-|\cos(\theta)|s}(u)\mathrm{d}u\\
+&=-|\cos\theta|^{-1}[\Phi_{-|\cos(\theta)|s}(\infty)-\Phi_{-|\cos(\theta)|s}(-\infty)]\\
+&=|\cos\theta|^{-1}
+\end{align*}
+$$
+Since by definition and induction:
+$$
+w(t)=T(t)\sigma(t)=|\cos\theta|\phi_{s}(f(\mathbf{p}(t)))
+$$
 Note that we have:
 $$
 \begin{align*}
-\frac{\mathrm{d}T}{\mathrm{d}t}\bigg|_{t}&=T(t)\sigma(t)\\
-\frac{\mathrm{d}\Phi}{\mathrm{d}t}\bigg|_{t=f(\mathbf{p}(t))}\frac{\mathrm{d}f}{\mathrm{d}t}\bigg|_{t=t}&=-|\cos\theta|\cdot\phi(f(\mathbf{p}(t)))
+\frac{\mathrm{d}T}{\mathrm{d}t}\bigg|_{t}&=-T(t)\sigma(t)\\
+\frac{\mathrm{d}\Phi_s}{\mathrm{d}t}\bigg|_{t=t}=\frac{\mathrm{d}\Phi_s}{\mathrm{d}f}\bigg|_{f=f(\mathbf{p}(t))}\frac{\mathrm{d}f}{\mathrm{d}t}\bigg|_{t=t}&=-|\cos\theta|\cdot\phi_s(f(\mathbf{p}(t)))
 \end{align*}
 $$
 
 Integrating both sides, taking the logarithm and then differentiating both sides:
 $$
-
+\begin{align*}
+&\Longrightarrow&T(t)&=\Phi_s(f(\mathbf{p}(t)))\\
+&\Longrightarrow&\int_{0}^t\rho(u)\mathrm{d}u&=-\ln\Phi_s(f(\mathbf{p}(t)))\\
+&\Longrightarrow&\rho(t)&=-\frac{-\dfrac{\mathrm{d}\Phi_s}{\mathrm{d}t}\bigg|_{t=f(\mathbf{p}(t))}}{\Phi_s(f(\mathbf{p}(t)))}
+\end{align*}
 $$
 沿射线 $\mathbf{p}(t)$ 有多个表面交点，我们将其裁剪为零以确保 $\rho$ 的值始终为非负数。
 There are multiple surface intersections along the ray $\mathbf{p}(t)$, we clip it against zero to ensure that the value of $\rho$ is always non-negative.
@@ -173,8 +195,7 @@ $$
 <blockquote style="border-left: 5px solid #4545aa; border-radius: 3px 0 0 3px; padding: 10px 15px; background-color: rgba(70, 70, 188, 0.1)">
     Theorem 1
 </blockquote>
-
-假设光滑曲面 $\mathbb{S}$ 由有符号距离函数 $f(\mathbf{x})=0$ 的水平集定义，并且一条光线 $\mathbf{p}(t)=\mathbf {o}+t\mathbf{v}$ 由外向内进入曲面$\mathbb{S}$，交点在 $t^{*}$，即 $f(\mathbf{p}(t^{*}))=0$。并且存在区间 $[t_l,t_r]$，使得 $t^*\in[t_l,t_r]$ 的时候曲面可以切向近似为足够小的平面，即 $\nabla{f}$ 被认为是固定的。然后，在 $[t_l,t_r]$ 中由不透明密度方程和透射方程计算的权重函数 $w(t)$ 在 $t^{*}$ 处达到极大值。
+假设光滑曲面 $\mathbb{S}$ 由有符号距离函数 $f(\mathbf{x})=0$ 的水平集定义，并且一条光线 $\mathbf{p}(t)=\mathbf {o}+t\mathbf{v}$ 由外向内进入曲面 $\mathbb{S}$，交点在 $t^{*}$，即 $f(\mathbf{p}(t^{*}))=0$。并且存在区间 $[t_l,t_r]$，使得 $t^*\in[t_l,t_r]$ 的时候曲面可以切向近似为足够小的平面，即 $\nabla{f}$ 被认为是固定的。然后，在 $[t_l,t_r]$ 中由不透明密度方程和透射方程计算的权重函数 $w(t)$ 在 $t^{*}$ 处达到极大值。
 Suppose that a smooth surface $\mathbb{S}$ is defined by the zero-level set of the signed distance function $f(\mathbf{x})=0$, and a ray $\mathbf{p}(t)=\mathbf{o}+t\mathbf{v}$ enters the surface $\mathbb{S}$ from outside to inside, with the intersection point at $t^{*}$, that is, $f(\mathbf{p}(t^{*}))=0$ and there exists an interval $[t_l,t_r]$ such that $t^*\in[t_l,t_r]$, the surface can be tangentially approximated by a sufficiently small planar patch, i.e., $\nabla{f}$ is regarded as fixed. Then, the weight function $w(t)$ computed by opaque density equation and transmittance equation in $[t_l,t_r]$ attains its maximum at $t^{*}$.
 
 #### Discretization
@@ -191,9 +212,11 @@ $$
 \alpha_{i}=\max\left(\frac{\Phi_{s}(f(\mathbf{p}(t_{i})))-\Phi_{s}(f(\mathbf{p}(t_{i+1})))}{\Phi_{s}(f(\mathbf{p}(t_i)))},0\right)
 $$
 
+（此部分在 Supplementary A。）
+
 ### 3.2 Training
 
-为了训练 NeuS，我们在没有任何 3D 监督的情况下最小化渲染颜色和 gt 颜色之间的差异。除了颜色，如果提供，我们还可以使用口罩进行监督。
+为了训练 NeuS，我们在没有任何 3D 监督的情况下最小化渲染颜色和 gt 颜色之间的差异。除了颜色，如果提供，我们还可以使用掩码进行监督。
 To train NeuS, we minimize the difference between the rendered colors and the ground truth colors, without any 3D supervision. Besides colors, we can also utilize the masks for supervision if provided.
 
 |      Symbol       |     Description     |
@@ -223,17 +246,58 @@ $\hat{O}_k=\sum_{i=1}^{n}T_{k,i}\alpha_{k,i}$ is the sum of weights along the ca
 
 ## 5 Conclusion
 
-## A Derivation for Computing Opacity
+## A Derivation for Computing Opacity $\alpha_i$
 
-vrlab123
+首先是自定义的 density：
+$$
+\rho(t)=\max\left(\frac{-\dfrac{\mathrm{d}\Phi_s}{\mathrm{d}t}\bigg|_{t=f(\mathbf{p}(t))}}{\Phi_s(f(\mathbf{p}(t)))},0\right)
+$$
+由于：
+$$
+\frac{\mathrm{d}\Phi_s}{\mathrm{d}t}\bigg|_{t=t}=\frac{\mathrm{d}\Phi_s}{\mathrm{d}f}\bigg|_{f=f(\mathbf{p}(t))}\frac{\mathrm{d}f}{\mathrm{d}\mathbf{p}}\bigg|_{\mathbf{p}=\mathbf{p}(t)}\frac{\mathrm{d}\mathbf{p}}{\mathrm{d}t}\bigg|_{t=t}=-\phi_s(f(\mathbf{p}(t)))(\nabla{f}(\mathbf{p}(t))\cdot\mathbf{v})
+$$
+因此 density 可以表示为：
+$$
+\rho(t)=\max\left(\frac{-\phi_s(f(\mathbf{p}(t)))(\nabla{f}(\mathbf{p}(t))\cdot\mathbf{v})}{\Phi_s(f(\mathbf{p}(t)))},0\right)
+$$
+首先考虑的情况是：采样 $[t_i,t_{i+1}]$ ，$-(\nabla{f}(\mathrm{p}(t))\cdot\mathbf{v})>0$，因此：
+$$
+\begin{align*}
+\alpha_i&=1-\exp\left(-\int_{t_i}^{t_{i+1}}\rho(t)\mathrm{d}t\right)\\
+&=1-\exp\left(\int_{t_i}^{t_{i+1}}\frac{\phi_s(f(\mathbf{p}(t)))(\nabla{f}(\mathbf{p}(t))\cdot\mathbf{v})}{\Phi_s(f(\mathbf{p}(t)))}\mathrm{d}t\right)\\
+&=1-\exp\left(\ln[\Phi_s(f(\mathbf{p}(t)))]\bigl|_{t_i}^{t_{i+1}}\right)\\
+&=1-\frac{\Phi_s(f(\mathbf{p}(t_{i+1})))}{\Phi_s(f(\mathbf{p}(t_i)))}\\
+&=\frac{\Phi_s(f(\mathbf{p}(t_i)))-\Phi_s(f(\mathbf{p}(t_{i+1})))}{\Phi_s(f(\mathbf{p}(t_i)))}
+\end{align*}
+$$
+因此 $\alpha_i>0$，且由于 $\Phi(x)\in(0,1)$，$\alpha_i<1$。
 
+其次是 $-(\nabla{f}(\mathrm{p}(t))\cdot\mathbf{v})<0$，$\alpha_i=0$。因此得到：
+$$
+\alpha_i=\max\left(\frac{\Phi_s(f(\mathbf{p}(t_i)))-\Phi_s(f(\mathbf{p}(t_{i+1})))}{\Phi_s(f(\mathbf{p}(t_i)))},0\right)
+$$
 
 ## B First-order Bias Analysis
 
-### B.2 Bias in Naive Solution (TBD)
+### B.1 Proof of Unbiased Property of Our Solution
 
+**定理 1**：假设光线从表面的外部进入内部。因此，我们有 $-(\nabla{f}(\mathrm{p}(t))\cdot\mathbf{v})>0$，因为按照惯例，SDF $f(x)$ 在外部为正，表面内部为负。
+**Theorem 1**: Suppose that the ray is going from outside to inside of the surface. Hence, we have $-(\nabla{f}(\mathrm{p}(t))\cdot\mathbf{v})>0$, because by convention the signed distance function $f(x)$ is positive outside and negative inside of the surface.
+
+
+
+
+
+### B.2 Bias in Naive Solution
+
+证明 $w(t)=\sigma(t)T(t)$ 的最大点小于 $\sigma(t)=\phi(f(\mathbf{p}(t)))$ 的最大点。
 Proof of the maximum point of $w(t)=\sigma(t)T(t)$ is smaller than that of $\sigma(t)=\phi(f(\mathbf{p}(t)))$.
 
+列出已有的关系：
+$$
+T(t)=\exp\left(-\int_0^t\sigma(s)\mathrm{d}s\right)\quad\frac{\mathrm{d}T}{\mathrm{d}t}=-\sigma(t)\exp\left(-\int_0^t\sigma(s)\mathrm{d}s\right)=-T(t)\sigma(t)
+$$
+首先求 $w(t)$ 达到最大值时候，对应的 $t^*$ 值：
 $$
 \begin{align*}
 \frac{\mathrm{d}w}{\mathrm{d}t}&=\frac{\mathrm{d}\sigma}{\mathrm{d}t}T+\frac{\mathrm{d}T}{\mathrm{d}t}\sigma\\
@@ -242,9 +306,18 @@ $$
 \end{align*}
 $$
 
+此时：
 $$
 \begin{align*}
-\frac{\mathrm{d}\sigma}{\mathrm{d}t}&=\sigma^2>0
+\frac{\mathrm{d}\sigma}{\mathrm{d}t}(t^*)&=\sigma^2(t^*)>0
 \end{align*}
 $$
+
+
+
+
+
+
+
+
 
