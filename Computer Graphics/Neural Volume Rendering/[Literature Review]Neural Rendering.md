@@ -30,6 +30,7 @@ These components are insufficient for achieving SOTA, there for they use **posit
 ### 3 Why was it done that way (related work)?
 
 2019 Neural Volumes Learning Dynamic Renderable Volumes from Images (Neural Volume)
+
 2019 DeepSDF Learning Continuous Signed Distance Functions for Shape Representation (DeepSDF)
 
 ### 4 What do the results show (figures and data tables)?

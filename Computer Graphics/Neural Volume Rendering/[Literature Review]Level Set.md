@@ -57,13 +57,32 @@ $$
 
 #### Unbiased & Occlusion-aware Solution
 
+We can induce that the density along the ray is:
+$$
+\rho(t)=\max\left(\frac{-\dfrac{\mathrm{d}\Phi_s}{\mathrm{d}t}\bigg|_{t=f(\mathbf{p}(t))}}{\Phi_s(f(\mathbf{p}(t)))},0\right)
+$$
+But we will not use it directly. A trick is that, we can directly output the alpha value used in alpha-blending:
+$$
+\alpha_{i}=\max\left(\frac{\Phi_{s}(f(\mathbf{p}(t_{i})))-\Phi_{s}(f(\mathbf{p}(t_{i+1})))}{\Phi_{s}(f(\mathbf{p}(t_i)))},0\right)
+$$
 
+#### Other Regularizer
 
+L1 render loss, Eikonal loss.
 
+### Related work
 
+2020 Multiview neural surface reconstruction by disentangling geometry and appearance
 
+### Results
 
+No foreground mask needed. Better geometry extraction than NeRF and IDR.
 
+### Discussion
 
+This model was successful by its multiview consistent and dense spatial sampling. NeRF gives it a good rendering effect.
 
+### Future work
+
+Gradient field.
 

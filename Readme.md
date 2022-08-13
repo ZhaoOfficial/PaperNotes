@@ -73,7 +73,7 @@ Personal notes of read papers and books.
     - [x] 3.2 Why Are Monte Carlo Techniques Useful?
     - [x] 3.3 Review of Probability Theory
     - [x] 3.4 Monte Carlo Integration
-    - [ ] 3.5 Sampling Random Variables
+    - [x] 3.5 Sampling Random Variables
     - [ ] 3.6 Variance Reduction
     - [ ] 3.7 Summary
 - [ ] 4 Strategies for Computing Light Transport
