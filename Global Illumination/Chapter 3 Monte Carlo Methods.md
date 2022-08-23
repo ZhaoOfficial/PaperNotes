@@ -215,6 +215,8 @@ $$
 
 ### 3.6.4 Combining Stratified Sampling and Importance Sampling
 
+(TODO:搞清楚什么意思 The Stochastic Ray Method for Radiosity)
+
 分层抽样可以很容易地与重要性抽样相结合：根据均匀概率分布计算的样本可以进行分层，然后使用逆累积分布函数对这些分层样本进行变换。
 Stratified sampling can easily be integrated with importance sampling: the samples computed from a uniform probability distribution can be stratified, and then these stratified samples are transformed using the inverse cumulative distribution function.
 
@@ -226,8 +228,17 @@ def stratified_importance_sampling(n: int):
     N_sum, P = 0, 0
     u = np.random.random()
     for i in range(n):
-        P += 
+        P += p[i]
+        N_i = int(P * n + u) - N_sum
+        samples.append(sample(N_i))
+        N_sum += N_i
 ```
+
+### 3.6.5 Combining Estimators of Different Distributions
+
+
+
+
 
 
 

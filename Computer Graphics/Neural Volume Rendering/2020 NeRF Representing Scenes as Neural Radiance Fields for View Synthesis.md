@@ -162,10 +162,3 @@ Batch size = 4096, $N_c=64$, $N_f=128$, learning rate = $5\times10^{-4}\to5\time
 
 诸如体素网格和网格之类的采样表示允许对渲染视图的预期质量和故障模式进行推理，但是当我们在深度神经网络的权重中编码场景时，如何分析这些问题尚不清楚。
 Sampled representations such as voxel grids and meshes admit reasoning about the expected quality of rendered views and failure modes, but it is unclear how to analyse these issues when we encode scenes in the weights of a deep neural network.
-
-
-
-
-
-
-

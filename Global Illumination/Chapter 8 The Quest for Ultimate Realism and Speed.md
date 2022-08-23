@@ -51,10 +51,27 @@ $$
 L(z\to\Theta)=L(x\to\Theta)\exp\left(-\int_0^s\sigma_t(x+t\Theta)\mathrm{d}t\right)
 $$
 
+在均匀介质中，两个后续碰撞之间的平均距离可以显示为 $1/\sigma_t$（单位 [$m$]）。后续碰撞之间的平均距离称为平均自由程。
+In a homogeneous medium, the average distance between two subsequent collisions can be shown to be $1/\sigma_t$ (units [$m$]). The average distance between subsequent collisions is called the mean free path.
 
+反照率 $\alpha(z)=\sigma_s(z)/\sigma_t(z)$（无量纲）描述了散射与吸收的相对重要性。
+The albedo $\alpha(z)=\sigma_s(z)/\sigma_t(z)$ (dimensionless) describes the relative importance of scattering versus absorption.
 
+### 8.1.5 In-Scattering, Field- and Volume-Radiance, and the Phase Function
 
+在 $z$ 位置进行内散射的第一个条件是在 $z$ 处完全存在散射，换句话说，$\sigma_s(z)=\alpha(z)\sigma_t(t)\ne0$。
+A first condition for in-scattering at a location $z$ is that there is scattering at $z$ at all, in other words, that $\sigma_s(z)=\alpha(z)\sigma_t(t)\ne0$.
 
+场辐射与消光系数 $L_v(z,\Psi)=L(z,\Psi)\sigma_t(z)$ 的乘积描述了每单位时间在 $z$ 处与介质碰撞的光子数。
+The product of field radiance with the extinction coefficient $L_v(z,\Psi)=L(z,\Psi)\sigma_t(z)$ describes the number of photons entering collisions with the medium at $z$ per unit of time.
 
+$z$ 处的相位函数 $p(z,\Psi\leftrightarrow\Theta)$（单位 [$\mathrm{sr}^{-1}$]）描述了从方向 $\Psi$ 散射到 $\Theta$ 的概率。通常，相位函数仅取决于 $\Psi$ 和 $\Theta$ 两个方向之间的夹角。
+The phase function $p(z,\Psi\leftrightarrow\Theta)$ at $z$ (units [$\mathrm{sr}^{-1}$]) describes the probability of scattering from direction $\Psi$ into $\Theta$. Usually, the phase function only depends on the angle between the two directions $\Psi$ and $\Theta$.
 
-
+volume scattering equation:
+$$
+\begin{align*}
+\mathrm{d}L(z\to\Theta)&=\int_{\mathcal{S}^2}\alpha(z)p(z,\Psi\leftrightarrow\Theta)\sigma_{t}(z)L(z\to\Psi)\mathrm{d}\omega_{\Psi}\mathrm{d}t\\
+&=\sigma_{s}(z)\int_{\mathcal{S}^2}p(z,\Psi\leftrightarrow\Theta)L(z\to\Psi)\mathrm{d}\omega_{\Psi}\mathrm{d}t
+\end{align*}
+$$
