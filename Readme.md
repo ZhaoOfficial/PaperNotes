@@ -16,9 +16,11 @@ Personal notes of read papers and books.
 
 2021 Plenoxels: Radiance Fields without Neural Networks
 
-2021 NeuS Learning Neural Implicit Surfacesby Volume Rendering for Multi-view Reconstruction
+2021 NeRF in detail: Learning to sample for view synthesis
 
-2021 Ref-NeRF Structured View-Dependent Appearance for Neural Radiance Fields
+2021 NeuS Learning Neural Implicit Surfaces by Volume Rendering for Multi-view Reconstruction
+
+2021 Ref-NeRF: Structured View-Dependent Appearance for Neural Radiance Fields
 
 2022 Instant Neural Graphics Primitives with a Multiresolution Hash Encoding
 

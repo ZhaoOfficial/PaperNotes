@@ -45,38 +45,6 @@ First it represents the static scene as a pure MLP, any spatial property queries
 
 A graphics pipeline based on real world imagery. Make the neural network represented scene interpretable.
 
-
-## 2021 NeRFactor: Neural Factorization of Shape and Reflectance Under an Unknown Illumination
-
-### 1 Motivation
-
-Recovering the **shape** and **spatially-varying reflectance** of an object from posed multi-view images of the object **illuminated by one unknown lighting condition**.
-
-Convert volume rendering to surface rendering using MLP.
-
-### 2 Methods
-
-#### Shape
-
-The shape is the depth in NeRF. And the surface point is the expectation of the ray traveling distance:
-$$
-\mathbf x_{\text{surf}}=\mathbf o+\left(\int_{0}^{\infty}T(t)\sigma(\mathbf r(t))tdt\right)\mathbf d\\
-T(t)=\exp({-\int_{0}^{t}\sigma(\mathbf r(s))ds})
-$$
-Since we have known the position of surface, by taking the gradient of the volume density, we can get the surface normal. But this normal is not smooth, so we use an MLP to repair it.
-
-
-
-### 3 Related work
-
-
-
-### 4 Results
-
-### 5 Discussion
-
-### 6 Future work
-
 ## 2021 Ref-NeRF Structured View-Dependent Appearance for Neural Radiance Fields
 
 ### 1 Motivation
@@ -147,5 +115,16 @@ To deal with the specular reflection, they advocate using reflection directions 
 
 Accelerating the mip-NeRF and ref-NeRF.
 
+## 2021 NeRF in detail: Learning to sample for view synthesis
 
+### 1 Motivation
 
+作者认为 NeRF 的 Coarse-to-Fine 采样策略不是最优的，Fine 阶段的采样不能指导 Coarse 阶段的采样。这部分的动机是合理的，个人认为确实会存在一个更好的采样方式。
+
+### 2 Methods
+
+作者搭建了一个网络，叫 Proposer，输入是 Coarse 阶段还没有过激活函数的输出，输出是 Fine 阶段的采样位置。直接从头训练效果很差，原因是网络是随机初始化的，直接用颜色训练不能监督好 Proposer，即输出和输入的对应关系比较差。因此作者先训练一个 NeRF，把 Coarse 阶段的采样送入 Proposer，用 Fine 阶段的采样做监督。然后 NeRF 训练差不多了，再把 Proposer 替换上去。
+
+### 5 Discussion
+
+个人觉得这个工作等于实验报告，没什么 insights。图形学这么多讲改进采样方式的论文，这个工作没有和其中的任何一篇进行比较。你只靠一个网络，还是在已有一个训练的差不多的 NeRF 的帮助下做的，不 work 才有大问题好不好。

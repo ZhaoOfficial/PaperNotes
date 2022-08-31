@@ -199,8 +199,26 @@ Low-order methods cannot retain their predictive accuracy for large time-steps, 
 #### 4.1.1 Example (Navier–Stokes equation)
 
 $$
+\frac{\partial\mathbf{u}}{\partial{t}}+\lambda_1\mathbf{u}\cdot\nabla\mathbf{u}=-\nabla\mathbf{p}+\lambda\nabla^2\mathbf{u}
 $$
 
+化为坐标形式：
+$$
+u_t+\lambda_1(uu_x+vu_y)=-p_x+\lambda_2(u_{xx}+u_{yy})\\
+v_t+\lambda_1(uv_x+vv_y)=-p_v+\lambda_2(v_{xx}+v_{yy})\tag{15}
+$$
 
+其中 $u(t,x,y)$ 是速度场的 $x$ 分量，$y(t,x,y)$ 是速度场的 $y$ 分量。
 
+Navier-Stokes 方程的解在无散度函数集合中搜索；即：
+Solutions to the Navier–Stokes equations are searched in the set of divergence-free functions; i.e.,
+$$
+u_x+v_y=0\tag{16}
+$$
+这个额外的方程是不可压缩流体的连续性方程，它描述了流体的质量守恒。
+This extra equation is the continuity equation for incompressible fluids that describes the conservation of mass of the fluid.
+$$
+u=\psi_y,v=-\psi_x\tag{17}
+$$
+for some latent potential function $\psi(t,x,y)$.
 
