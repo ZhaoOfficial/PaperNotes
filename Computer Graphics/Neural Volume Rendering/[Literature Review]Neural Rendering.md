@@ -125,6 +125,8 @@ Accelerating the mip-NeRF and ref-NeRF.
 
 作者搭建了一个网络，叫 Proposer，输入是 Coarse 阶段还没有过激活函数的输出，输出是 Fine 阶段的采样位置。直接从头训练效果很差，原因是网络是随机初始化的，直接用颜色训练不能监督好 Proposer，即输出和输入的对应关系比较差。因此作者先训练一个 NeRF，把 Coarse 阶段的采样送入 Proposer，用 Fine 阶段的采样做监督。然后 NeRF 训练差不多了，再把 Proposer 替换上去。
 
+这个网络本质上学了 Importance Sampling 的方法，即每个采样点积分时候的权重。
+
 ### 5 Discussion
 
 个人觉得这个工作等于实验报告，没什么 insights。图形学这么多讲改进采样方式的论文，这个工作没有和其中的任何一篇进行比较。你只靠一个网络，还是在已有一个训练的差不多的 NeRF 的帮助下做的，不 work 才有大问题好不好。
