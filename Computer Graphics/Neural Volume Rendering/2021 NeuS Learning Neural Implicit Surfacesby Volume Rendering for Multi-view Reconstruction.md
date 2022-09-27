@@ -189,7 +189,7 @@ $$
 沿射线 $\mathbf{p}(t)$ 有多个表面交点，我们将其裁剪为零以确保 $\rho$ 的值始终为非负数。
 There are multiple surface intersections along the ray $\mathbf{p}(t)$, we clip it against zero to ensure that the value of $\rho$ is always non-negative.
 $$
-\rho(t)=\max\left(\frac{-\dfrac{\mathrm{d}\Phi_s}{\mathrm{d}t}\bigg|_{t=f(\mathbf{p}(t))}}{\Phi_s(f(\mathbf{p}(t)))},0\right)
+\rho(t)=\max\left(\frac{-\dfrac{\mathrm{d}\Phi_s}{\mathrm{d}f}\bigg|_{f=f(\mathbf{p}(t))}}{\Phi_s(f(\mathbf{p}(t)))},0\right)
 $$
 
 <blockquote style="border-left: 5px solid #4545aa; border-radius: 3px 0 0 3px; padding: 10px 15px; background-color: rgba(70, 70, 188, 0.1)">

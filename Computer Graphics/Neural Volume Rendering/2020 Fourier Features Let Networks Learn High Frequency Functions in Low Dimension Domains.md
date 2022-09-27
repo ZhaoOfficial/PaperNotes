@@ -161,12 +161,14 @@ where $\mathbf{w}=\mathbf{K}^{-1}\mathbf{y}$.
 更高的频率映射（更高的傅立叶系数）会导致组合核具有更宽的频谱，从而可以更快地收敛高频分量。
 Higher frequency mappings (higher Fourier coefficient) result in composed kernels with wider spectra, which enables faster convergence for high-frequency components.
 
+We set $b_j=j$ (full Fourier basis in 1D) and $a_j=1/j^p$ for $j=\{1,\dots,n/2\}$. We use $p=\infty$ to denote the mapping $\gamma(v)=[\cos2\pi v,\sin2\pi v]^T$ that simply wraps $[0,1)$ around the unic circle (this is referred to as the "basic" mapping in later experi)
+
 ### Effects of Fourier features on network convergence
 
-我们通过从具有参数 $\alpha$ 的族中采样 $cn$ 值来生成一维函数的 gt，如下所示：我们独立同分布地采样长度为 $cn$ 的标准高斯向量，将其第 i 个条目缩放 $1/i^{\alpha}$，然后返回其傅里叶逆变换的实部。我们将其称为“$1/f^{\alpha}$ 噪声”信号。
+我们通过从具有参数 $\alpha$ 的族中采样 $cn$ 个值来生成一维函数的 gt，如下所示：我们独立同分布地采样长度为 $cn$ 的标准高斯向量，将其第 i 个条目缩放 $1/i^{\alpha}$，然后返回其傅里叶逆变换的实部。我们将其称为 “$1/f^{\alpha}$ 噪声” 信号。
 We generate ground truth 1D functions by sampling $cn$ values from a family with parameter $\alpha$ as follows: we sample a standard i.i.d. Gaussian vector of length $cn$, scale its i-th entry by $1/i^{\alpha}$, then return the real component of its inverse Fourier transform. We will refer to this as a "$1/f^{\alpha}$ noise" signal.
 
-
+![](../../Note Image/Fourier feature mapping.png)
 
 
 
