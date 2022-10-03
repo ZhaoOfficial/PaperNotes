@@ -12,13 +12,15 @@ Personal notes of read papers and books.
 
 2020 NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis
 
-2021 PlenOctrees for Real-time Rendering of Neural Radiance Fields
-
-2021 Plenoxels: Radiance Fields without Neural Networks
+2020 NeRF++ Analyzing and Improving Neural Radiance Fields
 
 2021 NeRF in detail: Learning to sample for view synthesis
 
 2021 NeuS Learning Neural Implicit Surfaces by Volume Rendering for Multi-view Reconstruction
+
+2021 PlenOctrees for Real-time Rendering of Neural Radiance Fields
+
+2021 Plenoxels: Radiance Fields without Neural Networks
 
 2021 Ref-NeRF: Structured View-Dependent Appearance for Neural Radiance Fields
 
@@ -27,6 +29,8 @@ Personal notes of read papers and books.
 2022 TensoRF: Tensorial Radiance Fields
 
 ### Other
+
+2013 Sphere-Meshes Shape Approximation Using Spherical Quadratic Error Metrics
 
 ### Rasterization
 
@@ -42,15 +46,25 @@ Personal notes of read papers and books.
 
 ## Computer Vision
 
+### Poisson
+
+2003 Poisson Image Editing
+
 ### Puzzle
 
 ### Reconstruction
+
+2020 Light Stage Super-Resolution Continuous High-Frequency Relighting
 
 ## Cryo
 
 ## Deep Learning
 
 2018 Bridging the Gap between Deep Learning and Sparse Matrix Format Selection
+
+### Simulation
+
+2018 Physics-informed neural networks A deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations
 
 # Books
 

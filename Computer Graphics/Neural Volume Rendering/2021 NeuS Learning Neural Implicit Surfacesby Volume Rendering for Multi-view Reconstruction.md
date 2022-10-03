@@ -127,7 +127,7 @@ The weight function $w(t)$ attains a local maximum at a point before the ray rea
 Use the normalized S-density as weights.
 
 $$
-w(t)=\frac{\phi_{s}(f(\mathbf{p}(t)))}{\int_{0}^{\infty}\phi_{s}(f(\mathbf{p}(u)))\mathrm{d}u}
+w(t)=\frac{\phi_{s}(f(\mathbf{p}(t)))}{\int_{-\infty}^{\infty}\phi_{s}(f(\mathbf{p}(u)))\mathrm{d}u}
 $$
 
 这种权重函数的构造是无偏的，但不是遮挡感知的。
@@ -161,7 +161,6 @@ $$
 &\int_{-\infty}^{\infty}\phi_{s}(-|\cos(\theta)|\cdot(u-t^*))\mathrm{d}u\\
 &=-|\cos\theta|^{-1}\int_{-\infty}^{\infty}\phi_{-|\cos(\theta)|s}(u-t^*)\mathrm{d}u\\
 &=-|\cos\theta|^{-1}\int_{-\infty}^{\infty}\phi_{-|\cos(\theta)|s}(u)\mathrm{d}u\\
-&=-|\cos\theta|^{-1}\int_{-\infty}^{\infty}\phi_{-|\cos(\theta)|s}(u)\mathrm{d}u\\
 &=-|\cos\theta|^{-1}[\Phi_{-|\cos(\theta)|s}(\infty)-\Phi_{-|\cos(\theta)|s}(-\infty)]\\
 &=|\cos\theta|^{-1}
 \end{align*}
@@ -181,8 +180,10 @@ $$
 Integrating both sides, taking the logarithm and then differentiating both sides:
 $$
 \begin{align*}
-&\Longrightarrow&T(t)&=\Phi_s(f(\mathbf{p}(t)))\\
-&\Longrightarrow&\int_{0}^t\rho(u)\mathrm{d}u&=-\ln\Phi_s(f(\mathbf{p}(t)))\\
+&\Longrightarrow&\int_{-\infty}^{t}\mathrm{d}T(t)&=\int_{-\infty}^{t}\mathrm{d}\Phi_s(f(\mathbf{p}(t)))\\
+&\Longrightarrow&T(t)-T(-\infty)&=\Phi_s(f(\mathbf{p}(t)))-\Phi_s(f(\mathbf{p}(-\infty)))\\
+&\Longrightarrow&T(t)-1&=\Phi_s(f(\mathbf{p}(t)))-1\\
+&\Longrightarrow&\int_{-\infty}^t\rho(u)\mathrm{d}u&=-\ln\Phi_s(f(\mathbf{p}(t)))\\
 &\Longrightarrow&\rho(t)&=-\frac{-\dfrac{\mathrm{d}\Phi_s}{\mathrm{d}t}\bigg|_{t=f(\mathbf{p}(t))}}{\Phi_s(f(\mathbf{p}(t)))}
 \end{align*}
 $$
@@ -297,20 +298,18 @@ Proof of the maximum point of $w(t)=\sigma(t)T(t)$ is smaller than that of $\sig
 $$
 T(t)=\exp\left(-\int_0^t\sigma(s)\mathrm{d}s\right)\quad\frac{\mathrm{d}T}{\mathrm{d}t}=-\sigma(t)\exp\left(-\int_0^t\sigma(s)\mathrm{d}s\right)=-T(t)\sigma(t)
 $$
-首先求 $w(t)$ 达到最大值时候，对应的 $t^*$ 值：
+首先求 $\sigma(t)$ 达到最大值时候，对应的 $\mathrm{d}w/\mathrm{d}t$ 值：
 $$
 \begin{align*}
 \frac{\mathrm{d}w}{\mathrm{d}t}&=\frac{\mathrm{d}\sigma}{\mathrm{d}t}T+\frac{\mathrm{d}T}{\mathrm{d}t}\sigma\\
 &=\frac{\mathrm{d}\sigma}{\mathrm{d}t}T-T\sigma^2\\
-&=T\biggl(\frac{\mathrm{d}\sigma}{\mathrm{d}t}-\sigma^2\biggr)=0\\
+&=T\biggl(\frac{\mathrm{d}\sigma}{\mathrm{d}t}-\sigma^2\biggr)
 \end{align*}
 $$
 
 此时：
 $$
-\begin{align*}
-\frac{\mathrm{d}\sigma}{\mathrm{d}t}(t^*)&=\sigma^2(t^*)>0
-\end{align*}
+\frac{\mathrm{d}\sigma}{\mathrm{d}t}(t^*)=0\Longrightarrow\sigma^2(t^*)>0\Longrightarrow\mathrm{d}w/\mathrm{d}t<0
 $$
 
 

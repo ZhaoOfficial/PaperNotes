@@ -208,7 +208,7 @@ u_t+\lambda_1(uu_x+vu_y)=-p_x+\lambda_2(u_{xx}+u_{yy})\\
 v_t+\lambda_1(uv_x+vv_y)=-p_v+\lambda_2(v_{xx}+v_{yy})\tag{15}
 $$
 
-其中 $u(t,x,y)$ 是速度场的 $x$ 分量，$y(t,x,y)$ 是速度场的 $y$ 分量。
+其中 $u(t,x,y)$ 是速度场的 $x$ 分量，$v(t,x,y)$ 是速度场的 $y$ 分量。
 
 Navier-Stokes 方程的解在无散度函数集合中搜索；即：
 Solutions to the Navier–Stokes equations are searched in the set of divergence-free functions; i.e.,
@@ -220,5 +220,82 @@ This extra equation is the continuity equation for incompressible fluids that de
 $$
 u=\psi_y,v=-\psi_x\tag{17}
 $$
+对于一些潜在的势函数 $\psi(t,x,y)$。
 for some latent potential function $\psi(t,x,y)$.
+
+We define $f(t,x,y)$ and $g(t,x,y)$ to be:
+$$
+f:=u_t+\lambda_1(uu_x+vu_y)+p_x-\lambda_2(u_{xx}+u_{yy})\\
+g:=v_t+\lambda_1(uv_x+vv_y)+p_v-\lambda_2(v_{xx}+v_{yy})\tag{18}
+$$
+The mean squared error loss:
+$$
+\begin{align*}
+\mathrm{MSE}&=\mathrm{MSE}_{uv}+\mathrm{MSE}_{fg}\\
+\mathrm{MSE}_{uv}&=\frac{1}{N}\sum_{i=1}^{N_b}\left(\left|u(t^i,x^i,y^i)-u^i\right|^2+\left|v(t^i,x^i,y^i)-v^i\right|^2\right)\\
+\mathrm{MSE}_{fg}&=\frac{1}{N}\sum_{i=1}^{N_f}\left(\left|f(t^i,x^i,y^i)\right|^2+\left|g(t^i,x^i,y^i)\right|^2\right)
+\end{align*}\tag{19}
+$$
+在这里，我们考虑通过圆柱体的不可压缩流的原型问题；一个已知的问题，在雷诺数 $Re=u_{\infty}D/\nu$ 的不同状态下表现出丰富的动态行为和转换。
+Here we consider the prototype problem of incompressible flow past a circular cylinder; a problem known to exhibit rich dynamic behavior and transitions for different regimes of the Reynolds number $Re=u_{\infty}D/\nu=1\times1\times0.01$.
+
+这里使用的神经网络架构由 9 层组成，每层有 20 个神经元。
+The neural network architecture used here consists of 9 layers with 20 neurons in each layer.
+
+一个更有趣的结果源于网络在没有关于压力本身的任何训练数据的情况下提供对整个压力场 $p(t,x,y)$ 的定性准确预测的能力。
+A more intriguing result stems from the network’s ability to provide a qualitatively accurate prediction of the entire pressure field $p(t,x,y)$ in the absence of any training data on the pressure itself.
+
+### 4.2 Discrete time models
+
+$$
+\begin{align*}
+u^n&=u^{n+c_i}+\Delta{t}\sum_{j=1}^qa_{ij}\mathcal{N}[u^{n+c_j};\lambda],i=1,\cdots,q\\
+u^n&=u^{n+1}+\Delta{t}\sum_{j=1}^qb_{j}\mathcal{N}[u^{n+c_j};\lambda]\\
+\end{align*}\tag{20}
+$$
+
+$u^{n+c_j}(x)=u\bigl(t^n+c_j\Delta{t},x\bigr),j=1,\cdots,q$ is the hidden state.
+
+This general form encapsulates both implicit and explicit time-stepping schemes, depending on the choice of the parameters $\{a_{ij},b_j,c_j\}$. Equations $(20)$​ can be equivalently expressed as:
+$$
+u^n=u^n_i\quad i=1,\dots,q\\
+u^{n+1}=u^{n+1}_i\quad i=1,\dots,q\tag{21}
+$$
+where:
+$$
+u^n_i=u^{n+c_i}+\Delta{t}\sum_{j=1}^qa_{ij}\mathcal{N}[u^{n+c_j};\lambda],i=1,\cdots,q\\
+u^{n+1}_i=u^{n+c_i}+\Delta{t}\sum_{j=1}^q(a_{ij}-b_{j})\mathcal{N}[u^{n+c_j};\lambda]\tag{22}
+$$
+We proceed by placing a multi-output neural network prior on:
+$$
+[u^{n+c_1}(x),\dots,u^{n+c_q}(x)]\tag{23}
+$$
+This prior assumption along with equations $(22)$ result in two physics-informed neural networks:
+$$
+[u^n_1(x),\dots,u^n_q(x), u^n_{q+1}(x)]\tag{24}
+$$
+
+and:
+$$
+[u^{n+1}_1(x),\dots,u^{n+1}_q(x), u^{n+1}_{q+1}(x)]\tag{25}
+$$
+The sum of squared errors:
+$$
+\begin{align*}
+\mathrm{SSE}&=\mathrm{SSE}_n+\mathrm{SSE}_{n+1}\\
+\mathrm{SSE}_n&=\sum_{i=1}^{q}\sum_{i=1}^{N_n}\left|u^n_j(x^{n,i})-u^{n,i}\right|^2\\
+\mathrm{SSE}_{n+1}&=\sum_{i=1}^{q}\sum_{i=1}^{N_{n+1}}\left|u^{n+1}_j(x^{{n+1},i})-u^{{n+1},i}\right|^2
+\end{align*}\tag{26}
+$$
+
+#### 4.2.1 Example (Korteweg-de Vries equation)
+
+$$
+u_t+\lambda_1uu_x+\lambda_2u_{xxx}=0\tag{27}
+$$
+
+## 5 Conclusion
+
+我们引入了基于物理的神经网络，这是一类新的通用函数逼近器，它能够编码任何支配给定数据集的基本物理定律，并且可以用偏微分方程来描述。
+We have introduced physics-informed neural networks, a new class of universal function approximators that is capable of encoding any underlying physical laws that govern a given data-set, and can be described by partial differential equations.
 
