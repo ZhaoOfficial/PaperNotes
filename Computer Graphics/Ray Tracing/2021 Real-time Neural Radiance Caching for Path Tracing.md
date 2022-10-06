@@ -16,17 +16,17 @@ We employ self-training to provide low-noise training targets and simulate infin
 幸运的是，辐射量具有显着的空间、方向和时间相关性，可以通过各种方式利用这些相关性来加速渲染。
 Fortunately, radiative quantities feature significant spatial, directional, and temporal correlations, which can be exploited in various ways to accelerate rendering.
 
-一种特别吸引人的方法是缓存辐射样本以供以后重复使用。 这可以在预计算步骤中完成，也可以在渲染时完成。
+一种特别吸引人的方法是缓存辐射样本以供以后重复使用。这可以在预计算步骤中完成，也可以在渲染时完成。
 One particularly appealing approach is to cache radiance samples for later reuse. This can be done in a precomputation step, or while rendering.
 
 我们建议通过使用神经辐射缓存来缓解这些困难，因为众所周知，神经网络特别适合替换复杂的启发式算法。
 We propose to alleviate these difficulties through the use of a neural radiance cache, as neural networks are known to be particularly apt at replacing complex heuristics.
 
-- **动态内容。**要处理完全交互的内容，系统必须支持相机、照明、几何和材质的任意动态。 我们努力寻求不需要预先计算的解决方案。
+- **动态内容。**要处理完全交互的内容，系统必须支持相机、照明、几何和材质的任意动态。我们努力寻求不需要预先计算的解决方案。
 **Dynamic content.** To handle fully interactive content, the system must support arbitrary dynamics of the camera, lighting, geometry, and materials. We strive for a solution that does not require precomputation.
-- **稳健性。** 特定案例的处理最终会导致复杂、脆弱的系统。因此，缓存应该与材质和场景几何无关。
+- **稳健性。**特定案例的处理最终会导致复杂、脆弱的系统。因此，缓存应该与材质和场景几何无关。
 **Robustness.** Case-specific handling eventually leads to complex, brittle systems. Hence, the cache should be agnostic of materials and scene geometry.
-- **可预测的性能和资源消耗。** 工作负载和内存使用的波动会导致帧率不稳定。我们寻求一种具有稳定运行时开销和内存占用的解决方案，这两者都应该独立于场景复杂性。渲染成本必须在最坏的情况下与像素数成线性关系。
+- **可预测的性能和资源消耗。**工作负载和内存使用的波动会导致帧率不稳定。我们寻求一种具有稳定运行时开销和内存占用的解决方案，这两者都应该独立于场景复杂性。渲染成本必须在最坏的情况下与像素数成线性关系。
 **Predictable performance and resource consumption.** Fluctuations in work load and memory usage lead to unstable frame rates. We seek a solution with stable runtime overhead and memory footprint, both of which should be independent of scene complexity. The rendering cost must scale at worst linearly with the number of pixels.
 
 前两个原则 - 动态内容和鲁棒性 - 对预训练的网络提出了一个重大挑战：训练后的模型必须泛化到新的配置，更糟糕的是，内容可能以前从未观察到。
@@ -84,11 +84,21 @@ Our neural network approximates $L_s$ by the cached radiance $\hat{L}_s$.
 
 ### 3.1 Algorithm Overview
 
-渲染单个帧包括计算像素颜色和更新神经辐射缓存。
+单帧渲染包括计算像素颜色和更新神经辐射缓存。
 Rendering a single frame consists of computing pixel colors and updating the neural radiance cache.
 
 首先，我们跟踪短渲染路径，每个像素一个，并在辐射缓存提供的近似值被认为足够准确时立即终止它们。
 First, we trace short rendering paths, one for each pixel, and terminate them as soon as the approximation provided by the radiance cache is deemed sufficiently accurate.
 
+我们使用最初在光子密度估计的上下文中开发的启发式算法，仅在路径的扩展足够大以模糊缓存的小不准确时才查询缓存。
 We use the heuristic that was originally developed in the context of photon density estimation, to only query the cache once the spread of the path is sufficiently large to blur small inaccuracies of the cache.
+
+在每个中间顶点，我们使用下一个事件估计来整合来自发光体的光。为此，我们在第一个顶点使用屏幕空间 ReSTIR，在后续顶点使用 LightBVH，通过多重重要性采样与 BSDF 结合。在终端顶点 $\mathbf{x}_k$ 处截断路径，我们评估神经辐射缓存以近似 $L_s(\mathbf{x}_k,\omega_k)$。
+At each intermediate vertex, we use next-event estimation to integrate light from emitters. To this end, we use screen-space ReSTIR at the primary vertex and a LightBVH, combined with the BSDF via multiple importance sampling, at the subsequent vertices. Truncating the path at the terminal vertex $\mathbf{x}_k$, we evaluate the neural radiance cache to approximate $L_s(\mathbf{x}_k,\omega_k)$.
+
+其次，为了训练辐射缓存，我们将一小部分（通常低于 3%）的短渲染路径扩展了几个顶点 - 一个训练后缀。
+Second, to train the radiance cache, we extend a fraction (typically under 3%) of the short rendering paths by a few vertices - a training suffix.
+
+和以前一样，一旦它们后缀的区域扩展足够大，我们就会终止这些较长的训练路径；为此，我们将查询顶点 $\mathbf{x}_k$ 视为主要顶点。在大多数情况下，后缀由一个顶点组成。沿较长训练路径的所有顶点收集的辐射估计值用作训练辐射缓存的参考值。
+As before, we terminate these longer training paths once the area spread of their suffix is sufficiently large; for that purpose we consider the query vertex $\mathbf{x}_k$ as a primary vertex. In the majority of cases, the suffix consists of one vertex. The radiance estimates collected along all vertices of the longer training paths are used as reference values for training the radiance cache.
 

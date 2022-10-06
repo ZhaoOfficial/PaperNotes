@@ -236,7 +236,36 @@ def stratified_importance_sampling(n: int):
 
 ### 3.6.5 Combining Estimators of Different Distributions
 
+#### Using Variance
 
+#### Multiple Importance Sampling
+
+MIS 结合了不同的估计器，对每个单独的样本使用可能不同的权重，甚至对来自同一估计器的样本也是如此。
+MIS combines different estimators using potentially different weights for each individual sample, even for samples from the same estimator.
+
+平衡启发函数用来确定结合这些来自不同 PDF 的样本的权重，且权重之和为1。
+The balance heuristic is used to determine the weights that combine these samples from different PDFs provided the weights sum to 1.
+
+平衡启发函数的结果是一个无偏的估计值，可以证明它的方差与 “最佳估计值” 的方差有一个相加的误差项。对于复杂的问题，这种策略是简单而稳健的。
+The balance heuristic results in an unbiased estimator that provably has variance that differs from the variance of the "optimal estimator" by an additive error term. For complex problems, this strategy is simple and robust.
+
+平衡启发函数：
+$$
+F=\sum_{i=1}^{n}\sum_{j=1}^{n_i}\frac{f(X_{i,j})}{\sum_{k}n_kp_k(X_{i,j})}
+$$
+从 PDF 为 $p_i$ 的采样中得到 $n_i$ 个值，记为 $X_{i,j},j\in\{1,\dots,n_i\}$。$N=\sum_in_i$。
+
+```python
+def balance_heuristic_mis(f: Callable, ni: list[int], pi: list[Callable]) -> float:
+    F = 0
+    N = sum(ni)
+    for i in range(len(ni)):
+        for j in range(ni[i]):
+            X = sample(pi[i])
+            d = sum(map(lambda n, p, X=X: n * p(X), ni, pi))
+            F += f(X) / d
+    return F
+```
 
 
 
