@@ -86,3 +86,57 @@ This model was successful by its multiview consistent and dense spatial sampling
 
 Gradient field.
 
+---
+
+SDF-density 映射：
+$$
+\Phi_{s}(x)=\frac{|\sigma|}{2\sigma}\sqrt{-\frac{x}{\pi}}\mathrm{erfi}\biggl(-\frac{x}{\sqrt{2}\sigma}\biggr)\\
+\phi_{s}(x)=\frac{\mathrm{d}}{\mathrm{d}x}\Phi_{s}(x)=\frac{1}{\sqrt{2\pi}\sigma}\exp\biggl(-\frac{x^2}{2\sigma^2}\biggr)
+$$
+权重构造：
+$$
+w(t)=\frac{\phi_{s}(f(\mathbf{r}(t)))}{\int_{-\infty}^{\infty}\phi_{s}(f(\mathbf{r}(u)))\mathrm{d}u}
+$$
+
+$$
+w(t)=T(t)\rho(t)\quad T(t)=\exp\left(-\int_0^t\rho(s)\mathrm{d}s\right)
+$$
+
+对于单平面来说，$f(\mathbf{r}(t))=-|\cos(\theta)|\cdot(t-t^*)$
+$$
+\begin{align*}
+w(t)&=\frac{\phi_{s}(f(\mathbf{p}(t)))}{\int_{-\infty}^{\infty}\phi_{s}(f(\mathbf{p}(u)))\mathrm{d}u}\\
+&=\frac{\phi_{s}(f(\mathbf{p}(t)))}{\int_{-\infty}^{\infty}\phi_{s}(-|\cos(\theta)|\cdot(u-t^*))\mathrm{d}u}\\
+&=|\cos\theta|\phi_{s}(f(\mathbf{p}(t)))
+\end{align*}
+$$
+
+$$
+\begin{align*}
+&\int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}\sigma}\exp\biggl(-\frac{|\cos(\theta)|^2\cdot(u-t^*)^2}{2\sigma^2}\biggr)\mathrm{d}u\\
+&=|\cos(\theta)|^{-1}\int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}(\sigma/|\cos(\theta)|)}\exp\biggl(-\frac{(u-t^*)^2}{2(\sigma/|\cos(\theta)|)^2}\biggr)\mathrm{d}u\\
+&=|\cos(\theta)|^{-1}\int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi}(\sigma/|\cos(\theta)|)}\exp\biggl(-\frac{u^2}{2(\sigma/|\cos(\theta)|)^2}\biggr)\mathrm{d}u\\
+
+&=|\cos\theta|^{-1}
+\end{align*}
+$$
+
+两个性质的融合：
+$$
+\begin{align*}
+\frac{\mathrm{d}T}{\mathrm{d}t}\bigg|_{t}&=-T(t)\sigma(t)\\
+\frac{\mathrm{d}\Phi_s}{\mathrm{d}t}\bigg|_{t=t}=\frac{\mathrm{d}\Phi_s}{\mathrm{d}f}\bigg|_{f=f(\mathbf{p}(t))}\frac{\mathrm{d}f}{\mathrm{d}t}\bigg|_{t=t}&=-|\cos\theta|\cdot\phi_s(f(\mathbf{p}(t)))
+\end{align*}
+$$
+因此也有：
+$$
+\rho(t)=-\frac{-\dfrac{\mathrm{d}\Phi_s}{\mathrm{d}t}\bigg|_{t=f(\mathbf{p}(t))}}{\Phi_s(f(\mathbf{p}(t)))}
+$$
+因此也有：
+$$
+\alpha_i=\frac{\Phi_s(f(\mathbf{p}(t_i)))-\Phi_s(f(\mathbf{p}(t_{i+1})))}{\Phi_s(f(\mathbf{p}(t_i)))}
+$$
+因此只要是 0 中心的钟形曲线jiu'x
+
+---
+
