@@ -8,6 +8,12 @@ Personal notes of read papers and books.
 
 ### Image-based Rendering
 
+### Level Sets
+
+2021 NeuS Learning Neural Implicit Surfaces by Volume Rendering for Multi-view Reconstruction
+
+2021 Volume Rendering of Neural Implicit Surfaces
+
 ### Neural Volume Rendering
 
 2020 NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis
@@ -15,8 +21,6 @@ Personal notes of read papers and books.
 2020 NeRF++ Analyzing and Improving Neural Radiance Fields
 
 2021 NeRF in detail: Learning to sample for view synthesis
-
-2021 NeuS Learning Neural Implicit Surfaces by Volume Rendering for Multi-view Reconstruction
 
 2021 PlenOctrees for Real-time Rendering of Neural Radiance Fields
 
@@ -55,6 +59,10 @@ Personal notes of read papers and books.
 ### Reconstruction
 
 2020 Light Stage Super-Resolution Continuous High-Frequency Relighting
+
+### Segmentation
+
+2012 SLIC Superpixels Compared to State-of-the-art Superpixel Methods
 
 ## Cryo
 
