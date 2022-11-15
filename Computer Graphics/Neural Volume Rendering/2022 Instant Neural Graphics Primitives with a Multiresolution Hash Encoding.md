@@ -125,9 +125,7 @@ For coarse levels where a dense grid requires fewer than $T$ parameters, i.e. $(
 We rely instead on the gradient-based optimization to store appropriate sparse detail in the array, and the subsequent neural network $m(y;\Phi)$ for collision resolution. The number of trainable encoding parameters $\theta$ is therefore $O(T)$ and bounded by $T\cdot L\cdot F$.
 
 我们使用以下形式的空间哈希函数，其中 $\oplus$ 表示各位异或操作，$\pi_i$ 是独特的大素数。实际上，这个公式将每个维度的线性同余（伪随机）排列的结果进行异或，去相关了维度对散列值的影响。
-
-##### We use a spatial hash function of the form below where $\oplus$ denotes the bit-wise XOR operation and $\pi_i$ are unique, large prime numbers. Effectively, this formula XORs the results of a per-dimension linear congruential (pseudo-random) permutation, decorrelating the effect of the dimensions on the hashed value.
-
+We use a spatial hash function of the form below where $\oplus$ denotes the bit-wise XOR operation and $\pi_i$ are unique, large prime numbers. Effectively, this formula XORs the results of a per-dimension linear congruential (pseudo-random) permutation, decorrelating the effect of the dimensions on the hashed value.
 $$
 h(\mathbf x)=\left(\bigoplus_{i=1}^{d}x_i\pi_i\right)
 $$

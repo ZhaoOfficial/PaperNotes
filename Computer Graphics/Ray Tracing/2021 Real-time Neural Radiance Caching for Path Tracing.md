@@ -2,8 +2,11 @@
 
 ## 0 Abstract
 
-我们的系统旨在处理完全动态的场景，并且不对光照、几何形状和材质做任何假设。我们的数据驱动方法回避了缓存算法的许多困难，例如定位、插值和更新缓存点。
-Our system is designed to handle fully dynamic scenes, and makes no assumptions about the lighting, geometry, and materials. The data-driven nature of our approach sidesteps many difficulties of caching algorithms, such as locating, interpolating, and updating cache points.
+我们的系统旨在处理完全动态的场景，并且不对光照、几何形状和材质做任何假设。
+Our system is designed to handle fully dynamic scenes, and makes no assumptions about the lighting, geometry, and materials. 
+
+我们的数据驱动方法回避了缓存算法的许多困难，例如定位、插值和更新缓存点。
+The data-driven nature of our approach sidesteps many difficulties of caching algorithms, such as locating, interpolating, and updating cache points.
 
 由于预训练神经网络以处理新颖的动态场景是一项艰巨的泛化挑战，因此我们取消了预训练，而是通过适应实现泛化，即我们选择在渲染时训练辐射缓存。
 Since pretraining neural networks to handle novel, dynamic scenes is a formidable generalization challenge, we do away with pretraining and instead achieve generalization via adaptation, i.e. we opt for training the radiance cache while rendering.

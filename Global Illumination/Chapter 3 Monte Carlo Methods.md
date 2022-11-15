@@ -213,6 +213,8 @@ $$
 $$
 这样可以保证投影到每一个维度上的 $N$ 个小区间中，每个区间都只会有一个采样。
 
+注意：若是 $1\sim N$ 随机重排，则需要减去 $u$；若是 $0\sim N-1$ 随机重排，则需要加上 $u$。
+
 ### 3.6.4 Combining Stratified Sampling and Importance Sampling
 
 (TODO:搞清楚什么意思 The Stochastic Ray Method for Radiosity)
