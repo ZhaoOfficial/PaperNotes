@@ -350,14 +350,14 @@ $\hat{p}_q(r.y)\cdot r.W$ simply represents the standard RIS weight of $\hat{p}_
 
 ### 4.2 Biased RIS
 
-标准 RIS 假定所有候选样本都是由相同的 PDF $p$ 产生的。我们现在允许 $\mathrm{x}$ 中的每个样本$x_i$来自可能不同的源 PDF $p_i(x_i)$：
+标准 RIS 假定所有候选样本都是由相同的 PDF $p$ 产生的。我们现在允许 $\mathrm{x}$ 中的每个样本 $x_i$ 来自可能不同的源 PDF $p_i(x_i)$：
 Standard RIS assumes that all candidate samples are produced by the same PDF $p$. We instead now allow each sample $x_i$ in $\mathrm{x}$ to come from a potentially different source PDF $p_i(x_i)$:
 $$
 p(\mathbf{x})=\prod_{i=1}^{M}p_i(x_i)\tag{13}
 $$
 因此 $\mathbf{x}$ 和 $z$ 的联合分布也可以得到：
 $$
-p(\mathbf{x},z)=p(\mathbf{x})p(z\mid\mathbf{x})=\biggl[\prod_{i=1}^{M}p_i(x_i)\biggr]\frac{\mathrm{w}_z(x_z)}{\sum_{i=1}^{M}\mathrm{w}_i(x_i)}\tag{15}
+p(\mathbf{x},z)=p(\mathbf{x})p(z\mid\mathbf{x})=\biggl[\prod_{i=1}^{M}p_i(x_i)\biggr]\frac{\mathrm{w}(x_z)}{\sum_{i=1}^{M}\mathrm{w}(x_i)}\tag{15}
 $$
 定义可以产生 $y$ 的索引的集合：
 $$
@@ -371,32 +371,135 @@ $$
 
 #### Expected RIS Weight
 
+有了 RIS 的 PDF 的定义，我们现在可以说明 RIS 权重 $W(\mathbf{x},z)$ 的期望值是 PDF 的倒数。
+With the PDF of RIS defined, we can now show when the expected value of the RIS weight $W(\mathbf{x},z)$ is the PDF's reciprocal.
+$$
+\mathbb{E}[W(\mathbf{x},z)]=\sum_{i\in Z(y)}\frac{\idotsint W(\mathbf{x}^{i\to y}, i)p(\mathbf{x}^{i\to y}, i)\mathrm{d}x_1\dots\mathrm{d}x_M}{p(y)}\tag{18}
+$$
 
+---
+
+$$
+\begin{align*}
+\mathbb{E}[W(\mathbf{x},z)]&=\sum_{i\in Z(y)}\frac{\idotsint W(\mathbf{x}^{i\to y}, i)p(\mathbf{x}^{i\to y}, i)\mathrm{d}x_1\dots\mathrm{d}x_M}{p(y)}\\
+&=\frac{1}{p(y)}\sum_{i\in Z(y)}\idotsint \frac{1}{\hat{p}(x_i)}\biggl[\frac{\cancel{\sum_{j=1}^{M}\mathrm{w}(x_j)}}{M}\biggr]\biggl[\prod_{j=1}^{M}p_j(x_j)\biggr]\biggl[\frac{\mathrm{w}(x_i)}{\cancel{\sum_{j=1}^{M}\mathrm{w}(x_j)}}\biggr]\mathrm{d}x_1\dots\mathrm{d}x_M\\
+&=\frac{1}{p(y)}\sum_{i\in Z(y)}\idotsint \frac{1}{\hat{p}(x_i)}\frac{\mathrm{w}(x_i)}{M}\biggl[\prod_{j=1}^{M}p_j(x_j)\biggr]\mathrm{d}x_1\dots\mathrm{d}x_M\\
+&=\frac{1}{p(y)}\sum_{i\in Z(y)}\frac{p(x_i)}{\hat{p}(x_i)}\frac{\mathrm{w}(x_i)}{M}\underbrace{\biggl[\idotsint\prod_{j=1,j\ne i}^{M}p_j(x_j)\mathrm{d}x_1\dots\mathrm{d}x_M\biggr]}_{1}\\
+&=\frac{1}{p(y)}\sum_{i\in Z(y)}\frac{p(x_i)}{\hat{p}(x_i)}\frac{\mathrm{w}(x_i)}{M}=\frac{1}{p(y)}\sum_{i\in Z(y)}\cancel{\frac{p(x_i)}{\hat{p}(x_i)}}\frac{\cancel{\mathrm{w}(x_i)}}{M}\\
+&=\frac{1}{p(y)}\frac{|Z(y)|}{M}
+\end{align*}\tag{19}
+$$
+
+---
+
+如果在目标函数不为零的地方，所有的候选 PDF 都不为零，那么 $|Z(y)|=M$，RIS 权重成为 RIS PDF 的逆的无偏估计。然而，如果有些PDF在积分段的一部分为零，那么 $|Z(y)|<M$，PDF 的逆就会被持续低估。这意味着预期值偏向于比真实积分更暗。
+If all candidate PDFs are non-zero wherever the target function is non-zero, then $|Z(y)| = M$, and the RIS weight becomes an unbiased estimator of the inverse RIS PDF. If, however, some of the PDFs are zero for part of the integrand, then $|Z(y)|<M$, and the inverse PDF is consistently underestimated. This means the expected value is biased to be darker than the true integral.
+
+#### A 1D Example
 
 ### 4.3 Unbiased RIS
 
+我们现在表明，这种偏差可以通过修改 RIS 权重来消除：我们可以选择一些（尚未指定的）权重 $m(x_z)$，而不是乘以系数 $1/M$。
+We now show that this bias can be eliminated by modifying the RIS weight: Instead of multiplying by the factor $1/M$, we can choose some (yet unspecified) weight $m(x_z)$:
+$$
+W(\mathbf{x},z)=\frac{1}{\hat{p}(x_z)}\biggl[m(x_z)\sum_{i=1}^{M}\mathrm{w}(x_i)\biggr]\tag{20}
+$$
+因此对应的期望就是：
+$$
+\mathbb{E}[W(\mathbf{x},z)]=\frac{1}{p(y)}\sum_{i\in Z(y)}m(x_i)\tag{21}
+$$
+若想要无偏，只需要保证 $\sum_{i\in Z(y)}m(x_i)=1$。
+
+#### Naive Approach
+
+我们不是除以$M$（候选数），而是除以该位置上 PDF 不为零的候选数，形成一个无偏的 RIS 估计器。
+Instead of dividing by $M$ (the number of candidates), we divide by the number of candidates with non-zero PDFs at that location, creating an unbiased RIS estimator.
+
+考虑一个接近但不完全是零的候选 PDF，如 $p_2(x)\propto\max(H(1/2-x),10^{-4})$。由于候选 PDF 从不为零，即使是原始的 RIS 估计器也是无偏的。然而，RIS PDF的逆的估计器会变得非常嘈杂。
+Consider a candidate PDF close to, but not exactly, zero such as $p_2(x)\propto\max(H(1/2-x),10^{-4})$. As the candidate PDF is never zero, even the original RIS estimator will be unbiased. However, the estimator of the inverse RIS PDF becomes extremely noisy.
+
 #### Combining with Multiple Importance Sampling
 
-#### Comparison to RIS
+$$
+m(x_z)=\frac{p(x_z)}{\sum_{i=1}^M p_i(x_z)}\tag{22}
+$$
+
+#### Comparison to Original RIS
+
+我们使用 $\mathrm{w}_i(x)=\hat{p}(x)/p_i(x)$ 作为权重，Talbot 等人使用 $\mathrm{w}_i(x)=\hat{p}(x)/\sum p_i(x)$。通过用一个单一的平均 PDF 代替单个 PDF，Talbot 放弃了混合多个候选 PDF 时出现的噪声和偏差问题。此外，如果候选 PDF 的总和比单个 PDF 更接近目标分布，那么与我们相比，Talbot 等人的方法可以进一步减少噪声。
+Where we use $\mathrm{w}_i(x)=\hat{p}(x)/p_i(x)$ as the weight,  Talbot et al. use $\mathrm{w}_i(x)=\hat{p}(x)/\sum p_i(x)$. By replacing the individual PDFs by a single average PDF, Talbot forgo noise and bias issues that arise when mixing multiple candidate PDFs. In addition, if the sum of candidate PDFs is closer to the target distribution than the individual PDFs, then Talbot et al.'s approach may further reduce noise compared to ours.
+
+Talbot 等人对每个候选样本的所有 PDF 进行评估；如果每个候选样本使用不同的 PDF，那么他们的方法的成本是 $O(M^2)$ PDF 评估。相比之下，我们的方法对每个候选样本只评估一个 PDF，而在计算最终的 MIS 权重时，所有的 PDF 只再评估一次，相当于 $O(M)$ 的成本。
+Talbot et al. evaluate all PDFs for each candidate sample; if each candidate sample uses a different PDF, then the cost of their approach is $O(M^2)$ PDF evaluations. In contrast, our approach evaluates only one PDF for each candidate, and all PDFs only once more when computing the final MIS weight, equivalent to a cost of $O(M)$.
 
 ### 4.4 A Practical Algorithm for Unbiased Reuse
+
+```python
+def CombineReservoirsUnbiased(q: Pixel, rs: list[Reservoir], qs: list[Pixel]):
+    s = Reservoir()
+    for r in rs:
+        s.update(r.y, p_q(r.y) * r.W * r.M)
+    s.M = sum(r.M for r in rs)
+
+    Z = 0
+    for q_, r in zip(qs, rs):
+        if p_q_(s.y) > 0:
+            Z += r.M
+    m = 1 / Z
+    s.W = (1 / p_q(s.y)) * (m * s.w_sum)
+    return s
+```
 
 ## 5 Design and Implementation Choices
 
 #### Candidate Generation
 
+We sample $M = 32$ initial candidates by importance sampling emissive triangles based on their power, and then uniformly generate a point $x$ on the selected triangle (i.e. $p(x)\propto L_e(x)$).  
+
+If an environment map is present in the scene, 25% of candidates are instead generated by importance sampling the environment map.
+
 #### Target PDF
+
+We use the unshadowed path contribution $\hat{p}\propto\rho\cdot L_e\cdot G$ as the target PDF at each pixel.
 
 #### Neighbor Selection
 
+对于空间重用，我们发现确定性地选择邻居（例如在当前像素周围的一个小盒子里）会导致分散注意力的伪影，而我们取而代之的是在当前像素周围半径为 $30$ 范围内对 $k=5$（对于我们的无偏算法来说 $k=3$）的随机点进行采样，这些点是从一个低差异的序列中采样的。
+For spatial reuse, we found that deterministically selected neighbors (e.g. in a small box around the current pixel) lead to distracting artifacts, and we instead sample $k = 5$ ($k = 3$ for our unbiased algorithm) random points in a $30$-pixel radius around the current pixel, sampled from a low-discrepancy sequence.
+
+For temporal reuse, we compute motion vectors to project the current pixel's position into the previous frame, and use the pixel there for temporal reuse.
+
+对于我们的有偏的算法，重新使用几何/材料大不相同的相邻像素的候选会导致偏差增大，我们使用一个简单的启发式方法来拒绝这样的像素：我们比较相机距离的差，以及当前像素与相邻像素的法线之间的角度，如果两者超过某个阈值（分别为当前像素深度的 $10\%$ 和 $25^\circ$），则拒绝该邻居。
+For our biased algorithm, reusing candidates from neighboring pixels with substantially different geometry/material leads to increased bias, and we use a simple heuristic to reject such pixels: we compare the difference in camera distance, and the angle between normals of the current pixel to the neighboring pixel, and reject the neighbor if either exceed some threshold ($10\%$ of current pixels depth and $25^\circ$, respectively).
+
 #### Evaluated Sample Count
 
+For our unbiased algorithm, we use $N = 1$ for interactive frame-rates; our biased algorithm uses $N = 4$ instead, i.e. we store four reservoirs at each pixel. For non-interactive render times, we simply average images of independent executions of our algorithm.
+
 #### Reservoir Storage and Temporal Weighting
+
+这导致（潜在的陈旧的）时间样本在重新取样时被不相称地加权。为了解决这个问题，我们简单地将前一帧的 $M$ 钳制在当前帧的水库的 $20$ 倍，这样既可以阻止 $M$ 的无限制增长，又可以限制时间信息的影响。
+This causes (potentially stale) temporal samples to be weighted disproportionately high during resampling. To fix this, we simply clamp the previous frame's $M$ to at most $20\times$ of the current frame's reservoir's $M$, which both stops unbounded growth of $M$ and bounds the influence of temporal information.
 
 ## 6 Results
 
 ## 7 Related Work
 
+#### Many-light Sampling
+
+#### Exploiting Path Reuse and Spatial Correlation
+
+#### Resampling
+
+#### Ratio & Weighted Estimators
+
+#### Weighted Reservoir Sampling
+
+#### De-noising/Reconstruction
+
 ## 8 Conclusion
+
+看待我们的技术的一种方式是，我们表明过滤和去噪不必仍然是渲染完成后进行的后处理--实际上，我们已经将去噪移到了渲染器的核心，过滤 PDF 而不是颜色。
+One way to view our technique is that we have shown that filtering and denoising need not remain a post-process that is performed once rendering completes - effectively, we have moved denoising into the core of the renderer and filter PDFs rather than colors.
 
 ### 8.1 Limitations and Future Work

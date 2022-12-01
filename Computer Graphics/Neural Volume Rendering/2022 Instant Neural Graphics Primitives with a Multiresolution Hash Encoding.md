@@ -42,7 +42,7 @@ Gigapixel image: $(x,y)\to(\mathrm{RGB})$.
 
 Neural signed distance function: $(x,y,z)\to d$.
 
-Neural radiance caching: $()$.
+Neural radiance caching: $(x,y,z,\theta,\phi,n,r,\alpha,\beta)\to L$.
 
 Neural radiance and density field: $(x,y,z,\theta,\phi)\to(\mathrm{RGB},\sigma)$
 
@@ -268,6 +268,9 @@ Our hash encoding exhibits similar numeric quality in terms of "intersection ove
 
 **Real-time Neural Radiance Caching for Path Tracing.**
 
+MLP 对每个像素都是独立运行的（即模型不是卷积的），所以特征缓冲区可以被视为每个像素的特征向量，它包含了三维坐标 $\mathbf{x}$ 以及额外的特征。
+The MLP is run independently for each pixel (i.e. the model is not convolutional), so the feature buffers can be treated as per-pixel feature vectors that contain the 3D coordinate $\mathbf{x}$ as well as additional features.
+
 ### 5.4 Neural Radiance and Density Fields (NeRF)
 
 **NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis.**
@@ -312,7 +315,7 @@ We prefer concatenation for two reasons. First, it allows for independent, fully
 
 #### Microstructure due to hash collisions
 
-颗粒是 MLP 无法完全补偿的哈希冲突的结果。我们相信，使用我们的编码在 SDF 上实现最先进质量的关键是找到克服这种微观结构的方法，例如通过过滤哈希表查找或在损失之前施加额外的平滑度。
+粒度是 MLP 无法完全补偿的哈希冲突的结果。我们相信，使用我们的编码在 SDF 上实现最先进质量的关键是找到克服这种微观结构的方法，例如通过过滤哈希表查找或在损失之前施加额外的平滑度。
 The graininess is a result of hash collisions that the MLP is unable to fully compensate for. We believe that the key to achieving state-of-the-art quality on SDFs with our encoding will be to find a way to overcome this microstructure, for example by filtering hash table lookups or by imposing an additional smoothness prior on the loss.
 
 #### Learning the hash function
